@@ -10,7 +10,12 @@ from django.contrib.contenttypes.models import ContentType
 from authentication.validators import percent_validation
 
 from django.forms.models import model_to_dict
+
+import django.dispatch
 # Create your models here.
+
+calculate_percent_signal = django.dispatch.Signal(providing_args=['todo_list_id'])
+
 class ModelDiffMixin(object):
     """
     Mixin that detects changes in model fields.
@@ -57,7 +62,9 @@ class ModelDiffMixin(object):
 class BaseToDoList(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    tasks = GenericRelation('ToDoItem')
+    tasks = GenericRelation('ToDoItem',
+                            content_type_field='todo_list_type',
+                            object_id_field='todo_list_id')
     name = models.CharField(max_length=512, verbose_name="ToDo-List Name")
 
     favorite = models.BooleanField(default=False, verbose_name="is Favorite")
@@ -80,7 +87,7 @@ class SimpleToDoList(BaseToDoList):
     status = models.CharField(choices=TODO_LIST_STATUS, max_length=255, default='not_started', verbose_name="Status")
 
 
-    def __save__(self, *args, **kwargs):
+    def save(self, *args, **kwargs):
         if self.status not in [s[0] for s in TODO_LIST_STATUS]:
             raise ValueError(f"Not Valid status. Can be {TODO_LIST_STATUS} not {self.status}.")
         super(SimpleToDoList, self).save(*args, **kwargs)
@@ -103,26 +110,32 @@ class Project(BaseToDoList):
     percentage_completed = models.DecimalField(verbose_name="Completed Status", default=0, validators=[percent_validation], max_digits=5, decimal_places=2)
     status = models.CharField(choices=PROJECT_STATUS, verbose_name="Status", max_length=256, default='not_started')
 
+
     def calculate_percent(self):
         all_tasks = self.tasks.all()
+        print(f"{all_tasks=}")
         completed_tasks = []
         for task in all_tasks:
-            if task.completed == True:
+            if task.is_completed == True:
                 completed_tasks.append(task)
-        _completed_part = Decimal((len(completed_tasks/all_tasks.count()) * 100))
-        return _completed_part
+        print(f'{completed_tasks=}')
+        try:
+            _completed_part = Decimal(str(len(completed_tasks)/self.tasks.count()))
+            print(f'{_completed_part=}')
+            self.percentage_completed = _completed_part
+        except ZeroDivisionError:
+            self.percentage_completed = Decimal('0.0')
+        
 
-    
     def __str__(self):
         return f'<Project: {self.name}>'
 
 
-    def __save__(self, *args, **kwargs):
+    def save(self, *args, **kwargs):
+        self.calculate_percent()
         if self.status not in [s[0] for s in PROJECT_STATUS]:
             raise ValueError(f"Not Valid status. Can be {PROJECT_STATUS} not {self.status}.")
-        
-        self.percentage_completed = self.calculate_percent()
-        super(Project, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 TODO_ITEM_REAPET = [
@@ -147,11 +160,11 @@ class Reminder(models.Model):
 
 class ToDoItem(models.Model):
     title = models.CharField(max_length=512, verbose_name="Task Title")
-    description = models.TextField(verbose_name="Desctiption")
+    description = models.TextField(verbose_name="Desctiption", blank=True)
     todo_list_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     todo_list_id = models.PositiveIntegerField()
     todo_list = GenericForeignKey('todo_list_type', 'todo_list_id')
-    subtask = models.ForeignKey('self', on_delete=models.CASCADE, blank=True)
+    subtask = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
 
     attached_file = models.FileField(upload_to=f'files/', blank=True)
     attached_photo = models.ImageField(upload_to='images/', blank=True)
@@ -167,16 +180,22 @@ class ToDoItem(models.Model):
     is_important = models.BooleanField(default=False, verbose_name='Is Important')
 
 
-    def __init(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(ToDoItem, self).__init__(*args, **kwargs)
-        self.__past_remind_time = self.reminder.remind_time
+        if self.reminder:
+            self.__past_remind_time = self.reminder.remind_time
         
 
 
-    def __save__(self, *args, **kwargs):
-        
+    def save(self, *args, **kwargs):
+        if isinstance(self.todo_list_type, Project):
+            list_id = self.todo_list.id
+            # calculate_percent_signal.send(sender=self, todo_list_id=list_id)
+        self.todo_list.calculate_percent()
+        self.todo_list.save()
         super(ToDoItem, self).save(*args, **kwargs)
-        self.__past_remind_time = self.reminder.remind_time
+        if self.reminder:
+            self.__past_remind_time = self.reminder.remind_time
 
     
     def __str__(self):

@@ -13,6 +13,16 @@ class EmailVerified(BasePermission):
         return bool(user.email_verified)
 
 
+class EmailNotVerified(BasePermission):
+    """
+    Check if current user has verified email
+    """
+
+    def has_permission(self, request, view):
+        user = request.user
+        return not bool(user.email_verified)
+
+
 class UserHasJWTToken(BasePermission):
     """
     Return True if JWT token is already generated for current user,
