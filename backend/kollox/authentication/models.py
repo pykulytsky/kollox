@@ -52,13 +52,13 @@ class UserManager(BaseUserManager):
 
     
 class User(AbstractBaseUser, PermissionsMixin):
-    """Custom User Model for JWT Authentication backend wit permissions"""
+    """Custom User Model for JWT Authentication backend with permissions"""
     username = models.CharField(max_length=255, db_index=True, unique=True)
     email = models.EmailField(validators=[validators.validate_email], unique=True, blank=False)
 
     first_name = models.CharField(max_length=255, blank=True,verbose_name= "First Name")
     last_name = models.CharField(max_length=255, blank=True, verbose_name="Last Name")
-    age = models.IntegerField(validators=[custom_validators.validate_age, ], verbose_name='Age', blank=True)
+    age = models.IntegerField(validators=[custom_validators.validate_age, ], verbose_name='Age', blank=True, null = True)
 
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -74,7 +74,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def save(self, *args, **kwargs):
         self.first_name = self.first_name.capitalize()
-        self.last_name = self.last_login.capitalize()
+        self.last_name = self.last_name.capitalize()
         super().save(*args, **kwargs)    
 
 
