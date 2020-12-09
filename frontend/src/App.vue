@@ -12,13 +12,15 @@
             v-for="item in links"
             :key="item.name"
             link
+            :to="item.url"
         >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{ item.name }}</v-list-item-title>
+            <v-list-item-title
+            >{{ item.name }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
