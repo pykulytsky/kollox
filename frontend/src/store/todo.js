@@ -31,7 +31,6 @@ export default {
             commit('setLoading', true)
             commit('clearError')
 
-
             commit('setLoading', false)
         }
     }

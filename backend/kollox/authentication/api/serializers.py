@@ -1,7 +1,6 @@
+from rest_framework import serializers
 from authentication.models import User, UserManager
 from django.contrib.auth import authenticate
-from rest_framework import serializers
-from django.contrib.auth import login
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -13,29 +12,26 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     token = serializers.CharField(max_length=255, read_only=True)
 
-
     class Meta:
         model = User
-        fields = ('email', 'username', 'password', 'token', )
+        fields = ('email', 'username', 'password', 'token',)
 
-    
     def create(self, validated_data) -> User:
         return User.objects.create_user(**validated_data)
 
-    
+
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(write_only=True)
     password = serializers.CharField(max_length=128, write_only=True)
     username = serializers.CharField(max_length=255, read_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
 
-
     def validate(self, validation_data) -> dict:
         email = validation_data.get('email', None)
         password = validation_data.get('password', None)
 
         if email is None:
-            raise serializers.ValidationError("Для входу потрібна пошта.")
+            raise serializers.ValidationError("Для вєоду потрібна пошта.")
 
         if password is None:
             serializers.ValidationError('Для входу потрібен пароль.')
@@ -48,17 +44,7 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Користувач не активний.")
 
         return {
-            'token' : user.token
+            'token': user.token
         }
 
-        
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('username', 'first_name', 'last_name', 'email_verified')
 
-
-class UserDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'age', "is_superuser", 'email_verified')

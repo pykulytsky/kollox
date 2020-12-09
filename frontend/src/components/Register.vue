@@ -9,17 +9,20 @@
 
       >
         <v-text-field
+            v-model="username"
             class="register__field"
             hint="This field uses counter prop"
             label="Username"
         ></v-text-field>
         <v-text-field
+            v-model="email"
             class="register__field"
             hint="This field uses counter prop"
             label="Email"
 
         ></v-text-field>
         <v-text-field
+            v-model="password"
             class="register__field"
             hint="This field uses counter prop"
             type="password"
@@ -31,7 +34,9 @@
               label="Remember password"
           ></v-checkbox>
           <v-spacer></v-spacer>
-          <v-btn>Register</v-btn>
+          <v-btn
+          @click="onSubmit"
+          >Register</v-btn>
         </v-card-actions>
         <router-link
             tag="a"
@@ -53,6 +58,28 @@ export default {
       username: '',
       email: '',
       password: ''
+    }
+  },
+
+  methods: {
+    onSubmit () {
+      // this.$store.dispatch('registerUser', {
+      //   username: this.username,
+      //   email: this.email,
+      //   password: this.password
+      // })
+      this.$http.post('http://localhost:8000/api/auth/register/',
+          {username: this.username,
+            email: this.email,
+            password: this.password
+          })
+      .then(response => {
+        console.log(response)
+        return response.json()
+      })
+      .then( token => {
+        console.log(token)
+      })
     }
   }
 }
