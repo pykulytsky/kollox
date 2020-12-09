@@ -20,10 +20,10 @@ class ModelDiffMixin(object):
     """
     Mixin that detects changes in model fields.
     """
-
     def __init__(self, *args, **kwargs):
         super(ModelDiffMixin, self).__init__(*args, **kwargs)
         self.__initial = self._dict
+
 
     @property
     def diff(self):
@@ -32,13 +32,16 @@ class ModelDiffMixin(object):
         diffs = [(k, (v, d2[k])) for k, v in d1.items() if v != d2[k]]
         return dict(diffs)
 
+
     @property
     def has_changed(self):
         return bool(self.diff)
 
+
     @property
     def changed_fields(self):
         return self.diff.keys()
+
 
     def get_field_diff(self, field_name):
         """
@@ -46,12 +49,14 @@ class ModelDiffMixin(object):
         """
         return self.diff.get(field_name, None)
 
+
     def save(self, *args, **kwargs):
         """
         Saves model and set initial state.
         """
         super(ModelDiffMixin, self).save(*args, **kwargs)
         self.__initial = self._dict
+
 
     @property
     def _dict(self):
@@ -92,10 +97,12 @@ class SimpleToDoList(BaseToDoList):
             raise ValueError(f"Not Valid status. Can be {TODO_LIST_STATUS} not {self.status}.")
         super(SimpleToDoList, self).save(*args, **kwargs)
 
+
     class Meta:
         abstract = False
         verbose_name = 'Simple ToDo List'
     
+
 PROJECT_STATUS = [
     ('in_archive', 'In Archive'),
     ('started', 'Started'),
@@ -185,7 +192,6 @@ class ToDoItem(models.Model):
         if self.reminder:
             self.__past_remind_time = self.reminder.remind_time
         
-
 
     def save(self, *args, **kwargs):
         if isinstance(self.todo_list_type, Project):
