@@ -154,6 +154,10 @@ export default {
 
     links () {
       return this.$store.getters.links
+    },
+
+    isUserAuthenticated () {
+      return this.$store.getters.isAuthenticated
     }
   },
   methods: {

@@ -388,6 +388,10 @@ export default {
 
     links () {
       return this.$store.getters.links
+    },
+
+    loading () {
+      return this.$store.getters.loading
     }
   },
   methods: {

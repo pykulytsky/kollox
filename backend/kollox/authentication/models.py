@@ -4,7 +4,9 @@ from django.core import validators
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.http import JsonResponse
 from django.contrib.auth.models import BaseUserManager
+import authentication.validators as custom_validators
 
+from jwt.exceptions import *
 import jwt
 import uuid
 
@@ -53,7 +55,13 @@ class User(AbstractBaseUser, PermissionsMixin):
                               unique=True,
                               blank=False)
 
+    age = models.IntegerField(validators=[custom_validators.validate_age, ], verbose_name='Age', blank=True, null=True)
+    last_name = models.CharField(max_length=255, blank=True, verbose_name="Last Name")
+    first_name = models.CharField(max_length=255, blank=True, verbose_name="First Name")
+
     is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
     is_active = models.BooleanField(default=True)
 
     email_verified = models.BooleanField(default=False)
@@ -64,14 +72,25 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
+    def save(self, *args, **kwargs):
+        self.first_name = self.first_name.capitalize()
+        self.last_name = self.last_name.capitalize()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.username
 
     def get_full_name(self):
-        return self.username
+        if self.first_name and self.last_name:
+            return f'{self.first_name} {self.last_name}'
+        else:
+            return self.username
 
     def get_short_name(self):
-        return self.username
+        if self.first_name and self.last_name:
+            return f'{self.first_name} {self.last_name}'
+        else:
+            return self.username
 
     @property
     def token(self):
@@ -79,10 +98,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def _generate_jwt_token(self):
         dt = datetime.now() + timedelta(days=60)
-
-        token = jwt.encode({
-            'id': self.pk,
-            'exp': dt.timestamp()
-        }, settings.SECRET_KEY, algorithm='HS256')
+        try:
+            token = jwt.encode({
+                'id': self.pk,
+                'exp': dt.timestamp()
+            }, settings.SECRET_KEY, algorithm='HS256')
+        except (InvalidTokenError, DecodeError, InvalidAlgorithmError,
+                InvalidAudienceError, ExpiredSignatureError, ImmatureSignatureError,
+                InvalidIssuedAtError, InvalidIssuerError, ExpiredSignature,
+                InvalidAudience, InvalidIssuer, MissingRequiredClaimError,
+                InvalidSignatureError,
+                PyJWTError):
+            raise ValueError("Error occured while generating jwt token")
 
         return token.decode('utf-8')

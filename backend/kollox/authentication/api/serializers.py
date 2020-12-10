@@ -48,3 +48,15 @@ class LoginSerializer(serializers.Serializer):
         }
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email_verified')
+
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name', 'age', "is_superuser", 'email_verified')
+

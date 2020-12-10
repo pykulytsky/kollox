@@ -6,13 +6,13 @@ from authentication.models import User
 
 
 class JWTAuthentication(authentication.BaseAuthentication):
-    authentication_header_prefix = 'Bearer'
+    _AUTHENTICATION_HEADER_PREFIX = 'Bearer'
 
     def authenticate(self, request) -> tuple:
         request.user = None
 
         auth_header = authentication.get_authorization_header(request).split()
-        auth_header_prefix = self.authentication_header_prefix.lower()
+        auth_header_prefix = self._AUTHENTICATION_HEADER_PREFIX.lower()
 
         if not auth_header:
             return None

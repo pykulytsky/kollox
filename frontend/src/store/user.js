@@ -1,8 +1,8 @@
-import response from "vue-resource/src/http/response";
+import {error} from "vue-resource/src/util";
+
 
 class User {
-    constructor(id, token) {
-        this.id = id
+    constructor(token) {
         this.token = token
     }
 
@@ -15,7 +15,10 @@ export default {
 
     mutations: {
         setUser (state, payload) {
-            state.user = new User(payload.id, payload.token)
+            state.user = new User(payload.token)
+        },
+        clearUser(state) {
+            state.user = null
         }
     },
 
@@ -24,30 +27,56 @@ export default {
             commit('setUser', payload)
         },
 
-        registerUser({commit}, payload) {
+        logout({commit}, payload) {
             commit('setLoading', true)
-            this.$http.post('http://localhost:8000/api/auth/register',
+            commit('clearError')
+
+            commit('clearUser')
+
+            commit('setLoading', false)
+        },
+
+        registerUser({commit}, payload) {
+
+            commit('setUser', {token: payload.token})
+
+
+        },
+        loginUser({commit}, payload) {
+            commit('setLoading', true)
+            this.$http.post('http://localhost:8000/api/auth/login/',
                 {username: payload.username,
                     email: payload.email,
                     password: payload.password
-            })
+                })
                 .then(response => {
                     return response.json()
                 })
                 .then(token => {
                     commit('setUser', {id: 1, token: token})
+                    commit('setLoading', false)
                     console.log(token)
                 })
                 .catch(error => {
                     commit('setError', error.message)
+                    commit('setLoading', false)
                     throw error
-            })
-        }
+                })
+        },
+
     },
 
     getters: {
         user (state) {
             return state.user
+        },
+        isAuthenticated (state) {
+            if (state.user) {
+                return  true
+            }
+            else {
+                return  false
+            }
         }
     }
 }
