@@ -87,7 +87,7 @@ export default {
     onSubmit() {
 
       if (this.$refs.form.validate() ) {
-        this.$store.dispatch('setLoading', true)
+        // this.$store.dispatch('setLoading', true)
 
         const user = {
           username: this.username,
@@ -95,26 +95,32 @@ export default {
           password: this.password
         }
 
-        this.$store.dispatch('setError', null)
-        this.$store.dispatch('clearError')
-        this.$http.post('http://localhost:8000/api/auth/register/', user)
-            .then(response => {
-              if (response.status == 200) {
-                console.log('success')
-                return response.json()
-              } else {
-                console.log(response.statusText)
-              }
-            })
-            .then(token => {
-              console.log(token)
-              this.$store.dispatch('registerUser', {token: token})
-              console.log(this.$store.getters.user)
-              this.$router.push('/todo-list/1')
+        this.$store.dispatch('registerUser', user)
+        .then( () => {
+          this.$router.push('/todo-list/1')
+        })
+        .catch(error => {
+          console.log(error)
+        })
 
-            })
-
-        this.$store.dispatch('setLoading', false)
+        // this.$store.dispatch('setError', null)
+        // this.$store.dispatch('clearError')
+        // this.$http.post('http://localhost:8000/api/auth/register/', user)
+        //     .then(response => {
+        //       if (response.status == 200) {
+        //         console.log('success')
+        //         return response.json()
+        //       } else {
+        //         console.log(response.statusText)
+        //       }
+        //     })
+        //     .then(token => {
+        //       this.$store.dispatch('registerUser', token)
+        //       console.log("Registered user: ", this.$store.getters.user)
+        //       this.$router.push('/todo-list/1')
+        //
+        //     })
+        // this.$store.dispatch('setLoading', false)
       }
       // this.$store.dispatch('registerUser', user)
       // .then(() => {

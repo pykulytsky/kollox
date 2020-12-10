@@ -5,7 +5,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from authentication.models import User
-from authentication.api.serializers import LoginSerializer, RegistrationSerializer
+from authentication.api.serializers import \
+    (LoginSerializer,
+     RegistrationSerializer,
+     UserSerializer,
+     UserDetailSerializer)
 
 
 class RegistrationAPIView(APIView):
@@ -18,7 +22,8 @@ class RegistrationAPIView(APIView):
         serializer.save()
 
         return Response({
-            'token': serializer.data.get('token', None)
+            'token': serializer.data.get('token', None),
+            'id': serializer.data.get('id', None)
         })
 
     def get(self, request):
@@ -38,6 +43,16 @@ class LoginAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class UserAPIView(APIView):
+    permission_classes = (AllowAny, )
+    serializer_class = UserDetailSerializer
+
+    def get(self, request, id):
+        _user = User.objects.get(id=id)
+
+        serializer = self.serializer_class(_user)
+        return Response(serializer.data,
+                        status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])

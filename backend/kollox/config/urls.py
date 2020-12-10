@@ -17,9 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 import authentication.urls as auth_urls
+import todo.urls as todo_urls
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include(auth_urls)),
+    path('api/todo/', include(todo_urls))
 ]

@@ -9,6 +9,11 @@
             class="d-flex flex-column main-card justify-space-around"
 
         >
+          <v-img
+              class="header__image"
+              src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+              height="200px"
+          ></v-img>
           <div class="card__header1">
             <h2 class="card__header__text">Todo List</h2>
             <v-btn
@@ -386,13 +391,10 @@ export default {
       }
     },
 
-    links () {
-      return this.$store.getters.links
-    },
-
     loading () {
       return this.$store.getters.loading
     }
+
   },
   methods: {
     addToFavorite () {
@@ -401,7 +403,11 @@ export default {
     openDialog() {
       this.dialog = true
     }
+  },
+  mounted() {
+    console.log(this.$store.getters.user)
   }
+
 }
 </script>
 
@@ -420,7 +426,10 @@ export default {
   min-height: 100%;
   justify-content: space-between;
   padding-top: 5px;
+
 }
+
+
 
 .todo__item {
   border-radius: 5px;
@@ -431,8 +440,11 @@ export default {
   padding: 3px 10px 10px 10px;
   background-color: #121212;
 
-
 }
+.todo__item:last-child {
+  margin-bottom: 25px;
+}
+
 .item__checkbox {
   margin: 0;
   padding: 0;
@@ -443,10 +455,13 @@ p {
 }
 
 .card__header1 {
-  margin: 5px 15px;
+  margin: 25px 15px;
   display: flex;
   justify-content: space-between;
 }
 
+.header__image {
+  margin: 0;
+}
 
 </style>

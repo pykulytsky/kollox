@@ -46,4 +46,5 @@ class JWTAuthentication(authentication.BaseAuthentication):
             message = 'Неактивний користувач.'
             raise exceptions.AuthenticationFailed(message)
 
+
         return (user, token)

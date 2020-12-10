@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from itertools import islice, chain
 
 from decimal import Decimal
 
@@ -15,6 +16,41 @@ import django.dispatch
 # Create your models here.
 
 calculate_percent_signal = django.dispatch.Signal(providing_args=['todo_list_id'])
+
+class QuerySetChain(object):
+    """
+    Chains multiple subquerysets (possibly of different models) and behaves as
+    one queryset.  Supports minimal methods needed for use with
+    django.core.paginator.
+    """
+
+    def __init__(self, *subquerysets):
+        self.querysets = subquerysets
+
+    def count(self):
+        """
+        Performs a .count() for all subquerysets and returns the number of
+        records as an integer.
+        """
+        return sum(qs.count() for qs in self.querysets)
+
+    def _clone(self):
+        "Returns a clone of this queryset chain"
+        return self.__class__(*self.querysets)
+
+    def _all(self):
+        "Iterates records in all subquerysets"
+        return chain(*self.querysets)
+
+    def __getitem__(self, ndx):
+        """
+        Retrieves an item or slice from the chained set of results from all
+        subquerysets.
+        """
+        if type(ndx) is slice:
+            return list(islice(self._all(), ndx.start, ndx.stop, ndx.step or 1))
+        else:
+            return islice(self._all(), ndx, ndx+1).next()
 
 class ModelDiffMixin(object):
     """
@@ -116,6 +152,7 @@ class Project(BaseToDoList):
     
     percentage_completed = models.DecimalField(verbose_name="Completed Status", default=0, validators=[percent_validation], max_digits=5, decimal_places=2)
     status = models.CharField(choices=PROJECT_STATUS, verbose_name="Status", max_length=256, default='not_started')
+
 
 
     def calculate_percent(self):

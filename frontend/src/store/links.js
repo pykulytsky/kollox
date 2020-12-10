@@ -105,7 +105,7 @@ export default {
 
     getters: {
         links (state) {
-            if (state.user) {
+            if (state.auth) {
                 return state.linksAuthenticated
             }
             else {

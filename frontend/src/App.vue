@@ -8,6 +8,24 @@
 
     >
       <v-list>
+        <v-list-item class="px-2">
+          <v-list-item-avatar>
+            <v-img src="https://randomuser.me/api/portraits/women/85.jpg"></v-img>
+          </v-list-item-avatar>
+        </v-list-item>
+
+        <v-list-item link>
+          <v-list-item-content>
+            <v-list-item-title class="title">
+              Sandra Adams
+            </v-list-item-title>
+            <v-list-item-subtitle>sandra_a88@gmail.com</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+
+      <v-divider></v-divider>
+      <v-list>
         <v-list-item
             v-for="item in links"
             :key="item.name"
@@ -25,13 +43,6 @@
         </v-list-item>
       </v-list>
 
-      <template v-slot:append>
-        <div class="pa-2">
-          <v-btn block>
-            Logout
-          </v-btn>
-        </div>
-      </template>
     </v-navigation-drawer>
 
     <v-app-bar
@@ -153,7 +164,61 @@ export default {
     },
 
     links () {
-      return this.$store.getters.links
+      if (this.isUserAuthenticated) {
+        return [
+          {
+            url: '/all-todo-lists',
+            icon: 'mdi-check-all',
+            name: 'All todo lists'
+          },
+          {
+            url: '/projects',
+            icon: 'mdi-briefcase-check',
+            name: 'Projects'
+          },
+          {
+            url: '/todos',
+            icon: 'mdi-check-bold',
+            name: 'Todos'
+          },
+          {
+            url: '/important',
+            icon: 'mdi-exclamation-thick',
+            name: 'Important todos'
+          },
+          {
+            url: '/new-todo',
+            icon: 'mdi-comment-check',
+            name: 'Add new todo'
+          },
+
+          {
+            url: '/logout',
+            icon: 'mdi-account-arrow-right',
+            name: 'Logout'
+          },
+          {
+            url: '/search',
+            icon: 'mdi-magnify',
+            name: 'Search'
+          }
+
+        ]
+      }
+      else {
+        return [
+          {
+            url: '/login',
+            icon: 'mdi-account-arrow-left',
+            name: 'Login'
+          },
+          {
+            url: '/register',
+            icon: 'mdi-shield-account',
+            name: 'Register'
+          },
+        ]
+      }
     },
 
     isUserAuthenticated () {
@@ -167,6 +232,13 @@ export default {
     openDialog() {
       this.dialog = true
     }
+  },
+  updated() {
+    console.log(this.isUserAuthenticated)
+    console.log("Storage: ",localStorage.getItem('auth'))
+  },
+  mounted() {
+    this.$store.dispatch('autoLogin')
   }
 
 };

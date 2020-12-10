@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from authentication.models import User, UserManager
-from django.contrib.auth import authenticate
+from rest_framework.authentication import authenticate
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -14,7 +14,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'username', 'password', 'token',)
+        fields = ('id', 'email', 'username', 'password', 'token',)
 
     def create(self, validated_data) -> User:
         return User.objects.create_user(**validated_data)
@@ -25,6 +25,7 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128, write_only=True)
     username = serializers.CharField(max_length=255, read_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
+    pk = serializers.IntegerField(read_only=True)
 
     def validate(self, validation_data) -> dict:
         email = validation_data.get('email', None)
@@ -44,7 +45,8 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Користувач не активний.")
 
         return {
-            'token': user.token
+            'token': user.token,
+            'pk': user.pk
         }
 
 
