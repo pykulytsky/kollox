@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <v-card
+        elevation="16"
     class="main__login__form"
     >
       <h2>Login to your account</h2>
@@ -91,10 +92,13 @@ export default {
 
         this.$store.dispatch('loginUser', user)
             .then(() => {
-              this.$router.push('/')
+              if (!this.$store.getters.error) {
+                this.$store.dispatch('loadAllTodoLists')
+                this.$router.push('/all-todo-lists')
+              }
             })
             .catch(error => {
-              console.log(error)
+              console.log("error on submit")
             })
 
       }

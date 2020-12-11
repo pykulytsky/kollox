@@ -40,3 +40,7 @@ class ToDoItemDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = ToDoItem
         fields = '__all__'
+
+
+class SimpleToDoListListSerializer(serializers.ModelSerializer):
+    pass

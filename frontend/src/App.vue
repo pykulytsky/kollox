@@ -10,16 +10,28 @@
       <v-list>
         <v-list-item class="px-2">
           <v-list-item-avatar>
-            <v-img src="https://randomuser.me/api/portraits/women/85.jpg"></v-img>
+            <v-img
+                src="noimage.jpg"></v-img>
           </v-list-item-avatar>
         </v-list-item>
 
-        <v-list-item link>
+        <v-list-item
+            v-if="user"
+            :to="'/profile/' + user.pk"
+            link>
           <v-list-item-content>
-            <v-list-item-title class="title">
-              Sandra Adams
+            <v-list-item-title
+                v-if="user.firstName && user.lastName"
+                class="title">
+              {{ user.firstName }} {{ user.lastName }}
             </v-list-item-title>
-            <v-list-item-subtitle>sandra_a88@gmail.com</v-list-item-subtitle>
+
+            <v-list-item-title
+                v-else
+                class="title">
+              {{ user.username }}
+            </v-list-item-title>
+            <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -117,6 +129,19 @@
       <router-view>
 
       </router-view>
+      <v-snackbar
+          v-if="error"
+          timeout="3000"
+          :value="true"
+      >
+        {{ error }}
+          <v-btn
+              color="pink"
+              @click="closeError"
+          >
+            Close
+          </v-btn>
+      </v-snackbar>
     </v-main>
 
   </v-app>
@@ -145,6 +170,9 @@ export default {
     }
   },
   computed: {
+    user () {
+      return this.$store.getters.user
+    },
     star () {
       if (this.favorite) {
         return  this.starIcon
@@ -163,6 +191,9 @@ export default {
       }
     },
 
+    error () {
+      return this.$store.getters.error
+    },
     links () {
       if (this.isUserAuthenticated) {
         return [
@@ -231,14 +262,19 @@ export default {
     },
     openDialog() {
       this.dialog = true
+    },
+    closeError () {
+      this.$store.dispatch('clearError')
     }
   },
   updated() {
-    console.log(this.isUserAuthenticated)
+    console.log()
     console.log("Storage: ",localStorage.getItem('auth'))
   },
   mounted() {
+    console.log("Storage: ",localStorage.getItem('auth'))
     this.$store.dispatch('autoLogin')
+    this.$store.dispatch('loadUser')
   }
 
 };

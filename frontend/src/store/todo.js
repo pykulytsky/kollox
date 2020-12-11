@@ -1,8 +1,12 @@
-
+import axios from 'axios'
+import response from "vue-resource/src/http/response";
 
 export default {
     state: {
-        todos: []
+        todos: [],
+        allLists: [],
+        projects: [],
+        simpleToDoLists: []
     },
     mutations: {
         setTodos (state, payload) {
@@ -10,7 +14,24 @@ export default {
         },
         addTodo (state, payload) {
             state.todos.push(payload)
-        }
+        },
+        setAllLists (state, payload) {
+            state.allLists = payload
+        },
+        setProjects (state, payload) {
+            state.projects = payload
+        },
+        setSimpleToDoLists (state, payload) {
+            state.simpleToDoLists = payload
+        },
+
+        addProject (state, payload) {
+            state.projects.push(payload)
+        },
+        addSimpleToDoLists (state, payload) {
+            state.simpleToDoLists.push(payload)
+        },
+
     },
 
     actions: {
@@ -27,11 +48,32 @@ export default {
             commit('addTodo', payload)
             commit('setLoading', true)
         },
-        loadTodos ({commit}, payload) {
+        loadAllTodoLists ({commit}) {
             commit('setLoading', true)
             commit('clearError')
 
+            const config = {
+                headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+            };
+
+            const userId = JSON.parse(localStorage.getItem('auth'))['pk']
+
+            const url = 'http://localhost:8000/api/todo/all-todo-lists/' + userId + '/'
+
+            axios.get(url, config)
+                .then(response => {
+                    commit('setAllLists', response.data)
+                })
+                .catch(error => {
+                    commit('setError', error.message)
+                })
+
             commit('setLoading', false)
+        }
+    },
+    getters: {
+        allLists (state) {
+            return state.allLists
         }
     }
 }

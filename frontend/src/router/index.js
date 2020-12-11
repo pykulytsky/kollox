@@ -40,7 +40,12 @@ const routes = [
   },
   {
     path: '/all-todo-lists',
-    component: AllTodoLists
+    component: AllTodoLists,
+    beforeEnter(to, from, next) {
+      store.dispatch('loadUser')
+      next()
+    }
+
   },
 
   {

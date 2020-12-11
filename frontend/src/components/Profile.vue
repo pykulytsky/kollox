@@ -1,6 +1,8 @@
 <template>
   <v-container>
-    <div class="profile__main">
+    <div
+        elevation="16"
+        class="profile__main">
 
       <div class="img__section">
         <v-img
@@ -50,48 +52,20 @@
 export default {
   data: () => {
     return {
-      desserts: [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-        },
-      ],
+
+    }
+  },
+
+  beforeCreate() {
+    this.$store.dispatch('loadUser')
+  },
+  computed: {
+    loading () {
+      return this.$store.getters.loading
+    },
+
+    user () {
+      return this.$store.getters.user
     }
   }
 }

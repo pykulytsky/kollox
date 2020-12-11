@@ -4,7 +4,7 @@
       <v-flex
           xs12 sm8 md8>
         <v-card
-
+            elevation="16"
             :loading="loading"
             class="d-flex flex-column main-card justify-space-around"
 

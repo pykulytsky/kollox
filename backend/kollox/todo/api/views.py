@@ -35,5 +35,35 @@ class AllToDoListAPIView(APIView):
                         status=status.HTTP_200_OK)
 
 
+class SimpleToDoListsAPIView(APIView):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = SimpleToDoListListSerializer
 
-    
+    def get(self, request, user_id):
+        _owner = User.objects.get(id=user_id)
+        _simple_todo_lists = SimpleToDoList.objects.filter(owner=_owner)
+
+        serializer = self.serializer_class(_simple_todo_lists)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+class ProjectListsAPIView(APIView):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = ProjectListSerializer
+
+    def get(self, request, user_id):
+        _owner = User.objects.get(id=user_id)
+        _simple_todo_lists = SimpleToDoList.objects.filter(owner=_owner)
+
+        serializer = self.serializer_class(_simple_todo_lists)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class SimpleToDoListDetailAPIView(APIView):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = SimpleToDoListDetailSerializer
+
+    def get(self, request, user_id):
+        
+

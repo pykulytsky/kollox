@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import links from "@/store/links";
 import user from "@/store/user";
 import common from "@/store/common";
-import todo from '@/store/common'
+import todo from '@/store/todo'
 
 Vue.use(Vuex)
 

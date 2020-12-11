@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <v-card
+        elevation="16"
         class="main__register__form"
     >
       <h2>Register your account</h2>
@@ -96,12 +97,14 @@ export default {
         }
 
         this.$store.dispatch('registerUser', user)
-        .then( () => {
-          this.$router.push('/todo-list/1')
-        })
-        .catch(error => {
-          console.log(error)
-        })
+            .then(() => {
+              if (!this.$store.getters.error) {
+                this.$router.push('/login')
+              }
+            })
+            .catch(error => {
+              console.log("error on submit")
+            })
 
         // this.$store.dispatch('setError', null)
         // this.$store.dispatch('clearError')
