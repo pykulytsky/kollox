@@ -59,7 +59,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=255, blank=True, verbose_name="Last Name")
     first_name = models.CharField(max_length=255, blank=True, verbose_name="First Name")
 
-    avatar = models.ImageField(upload_to="d:/repos/kollox/frontend/src/assets/", default="noimage.jpg")
+    avatar = models.ImageField(upload_to="d:/repos/kollox/frontend/src/assets/",
+                               default="https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80")
 
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)

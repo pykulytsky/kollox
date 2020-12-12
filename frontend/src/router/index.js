@@ -16,7 +16,16 @@ const routes = [
   {
     path: '/todo-list/:id',
     component: TodoList,
-    name: 'todo-list'
+    name: 'todo-list',
+    beforeEnter(to, from, next) {
+      if (JSON.parse(localStorage.getItem('auth'))['token']) {
+        store.dispatch('loadUser')
+        next()
+      }
+      else {
+        next('/login')
+      }
+    }
   },
   {
     path: '/login',
@@ -42,15 +51,29 @@ const routes = [
     path: '/all-todo-lists',
     component: AllTodoLists,
     beforeEnter(to, from, next) {
-      store.dispatch('loadUser')
-      next()
+      if (JSON.parse(localStorage.getItem('auth'))['token']) {
+        store.dispatch('loadUser')
+        next()
+      }
+      else {
+        next('/login')
+      }
     }
 
   },
 
   {
     path: "/profile/:id",
-    component: Profile
+    component: Profile,
+    beforeEnter(to, from, next) {
+      if (JSON.parse(localStorage.getItem('auth'))['token']) {
+        store.dispatch('loadUser')
+        next()
+      }
+      else {
+        next('/login')
+      }
+    }
   }
 ]
 

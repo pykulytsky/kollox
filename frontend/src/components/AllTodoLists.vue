@@ -21,7 +21,7 @@
       </v-card-title>
 
       <v-card-subtitle>
-        1,000 miles of wonder
+        {{ list.data.id }}
       </v-card-subtitle>
 
       <v-card-actions>
@@ -132,6 +132,7 @@
             <v-col cols="12">
               <v-text-field
                   label="Name*"
+                  v-model="newToDoListName"
                   required
               ></v-text-field>
             </v-col>
@@ -168,7 +169,8 @@ export  default {
   data: () => {
     return {
       dialog: false,
-      todoListType: 'simpleList'
+      todoListType: 'simpleList',
+      newToDoListName: ''
     }
   },
   computed: {
@@ -188,15 +190,28 @@ export  default {
     onCreateSubmit () {
       if (this.todoListType == 'simpleList') {
 
+        axios.post('http://localhost:8000/api/todo/simple-todo-lists/', {'name':
+          this.newToDoListName}, {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`
+        }})
+
+
       }
       else if (this.todoListType == 'project') {
-
+        axios.post('http://localhost:8000/api/todo/projects/', {'name': this.newToDoListName},
+            {headers: {
+              Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`
+              }})
       }
 
+      this.$store.dispatch('loadAllTodoLists')
+      this.dialog = false
     }
   },
   mounted() {
     this.$store.dispatch('loadAllTodoLists')
+    console.log(this.$store.getters.allLists)
 
   }
 }

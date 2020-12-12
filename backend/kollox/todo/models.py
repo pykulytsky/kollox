@@ -103,9 +103,6 @@ class ModelDiffMixin(object):
 class BaseToDoList(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    tasks = GenericRelation('ToDoItem',
-                            content_type_field='todo_list_type',
-                            object_id_field='todo_list_id')
     name = models.CharField(max_length=512, verbose_name="ToDo-List Name")
 
     favorite = models.BooleanField(default=False, verbose_name="is Favorite")
@@ -124,7 +121,9 @@ TODO_LIST_STATUS = [
 
 class SimpleToDoList(BaseToDoList):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_simple_todo_lists", verbose_name="ToDo-List Owner")
-
+    tasks = GenericRelation('ToDoItem',
+                            content_type_field='todo_list_type',
+                            object_id_field='todo_list_id')
     status = models.CharField(choices=TODO_LIST_STATUS, max_length=255, default='not_started', verbose_name="Status")
 
 
@@ -149,7 +148,9 @@ PROJECT_STATUS = [
 
 class Project(BaseToDoList):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_projects", verbose_name="ToDo-List Owner")
-    
+    tasks = GenericRelation('ToDoItem',
+                            content_type_field='todo_list_type',
+                            object_id_field='todo_list_id')
     percentage_completed = models.DecimalField(verbose_name="Completed Status", default=0, validators=[percent_validation], max_digits=5, decimal_places=2)
     status = models.CharField(choices=PROJECT_STATUS, verbose_name="Status", max_length=256, default='not_started')
 

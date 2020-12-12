@@ -55,10 +55,7 @@ export default {
             const config = {
                 headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
             };
-
-            const userId = JSON.parse(localStorage.getItem('auth'))['pk']
-
-            const url = 'http://localhost:8000/api/todo/all-todo-lists/' + userId + '/'
+            const url = 'http://localhost:8000/api/todo/all-todo-lists/'
 
             axios.get(url, config)
                 .then(response => {
