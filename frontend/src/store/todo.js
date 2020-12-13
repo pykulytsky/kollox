@@ -59,6 +59,7 @@ export default {
 
             axios.get(url, config)
                 .then(response => {
+                    console.log("Success loading todos: ", response.data)
                     commit('setAllLists', response.data)
                 })
                 .catch(error => {

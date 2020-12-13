@@ -9,12 +9,14 @@ import Register from "@/components/Register";
 import Profile from "@/components/Profile";
 
 import store from '../store'
+import Projects from "@/components/Projects";
+import Project from "@/components/Project";
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/todo-list/:id',
+    path: '/simple-todo-list/:id',
     component: TodoList,
     name: 'todo-list',
     beforeEnter(to, from, next) {
@@ -26,6 +28,23 @@ const routes = [
         next('/login')
       }
     }
+  },
+
+
+  {
+    path: '/project/:id',
+    component: Project,
+    name: 'projects',
+    beforeEnter(to, from, next) {
+      if (JSON.parse(localStorage.getItem('auth'))['token']) {
+        store.dispatch('loadUser')
+        next()
+      }
+      else {
+        next('/login')
+      }
+    }
+
   },
   {
     path: '/login',
@@ -48,7 +67,7 @@ const routes = [
     }
   },
   {
-    path: '/all-todo-lists',
+    path: '/all-todo-lists/',
     component: AllTodoLists,
     beforeEnter(to, from, next) {
       if (JSON.parse(localStorage.getItem('auth'))['token']) {
@@ -63,7 +82,22 @@ const routes = [
   },
 
   {
-    path: "/profile/:id",
+    path: '/projects/',
+    component: Projects,
+    beforeEnter(to, from, next) {
+      if (JSON.parse(localStorage.getItem('auth'))['token']) {
+        store.dispatch('loadUser')
+        next()
+      }
+      else {
+        next('/login')
+      }
+    }
+
+  },
+
+  {
+    path: "/profile",
     component: Profile,
     beforeEnter(to, from, next) {
       if (JSON.parse(localStorage.getItem('auth'))['token']) {

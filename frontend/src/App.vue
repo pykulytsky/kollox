@@ -17,7 +17,7 @@
 
         <v-list-item
             v-if="user"
-            :to="'/profile/' + user.pk"
+            to="/profile"
             link>
           <v-list-item-content>
             <v-list-item-title
@@ -268,13 +268,17 @@ export default {
     }
   },
   updated() {
-    console.log()
     console.log("Storage: ",localStorage.getItem('auth'))
+
   },
   mounted() {
     console.log("Storage: ",localStorage.getItem('auth'))
-    this.$store.dispatch('autoLogin')
     this.$store.dispatch('loadUser')
+    this.$store.dispatch('autoLogin')
+  },
+  beforeCreate() {
+    this.$store.dispatch('loadUser')
+    this.$store.dispatch('autoLogin')
   }
 
 };

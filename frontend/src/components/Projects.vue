@@ -169,13 +169,12 @@ export  default {
   data: () => {
     return {
       dialog: false,
-      todoListType: 'simpleList',
-      newToDoListName: ''
+
     }
   },
   computed: {
     todoLists () {
-      return this.$store.getters.allLists
+      return this.$store.getters.allProjects
     },
     loading () {
       return this.$store.getters.loading
@@ -199,9 +198,9 @@ export  default {
       this.dialog = false
 
     },
-  }
+  },
   mounted() {
-    this.$store.dispatch('loadAllTodoLists')
+    this.$store.dispatch('loadAllProjects')
 
   }
 }

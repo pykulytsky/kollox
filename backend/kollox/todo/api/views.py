@@ -128,3 +128,26 @@ class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     #
     #     return Response(serializer.data,
     #                     status=status.HTTP_200_OK)
+
+
+class ToDoItemListView(generics.ListCreateAPIView):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = ToDoItemSerializer
+
+    def get_queryset(self, request):
+        queryset = ToDoItem.objects.filter(
+            todo_list_id=request.data['list_id'],
+            todo_list_type=request.data['list_type'])
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.serializer_class(self.get_queryset(request), many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ToDoItemDetailView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ToDoItemDetailSerializer
+    lookup_url_kwarg = 'id'
+    queryset = ToDoItem.objects.all()

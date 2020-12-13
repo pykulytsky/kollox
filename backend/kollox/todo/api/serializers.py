@@ -41,9 +41,10 @@ class ReminderSerializer(serializers.ModelSerializer):
 
 
 class ToDoItemSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = ToDoItem
-        fields = ('title', 'is_completed', 'is_favorite', 'is_important')
+        fields = ('id', 'title', 'is_completed', 'is_favorite', 'is_important', 'todo_list_id', 'todo_list_type')
 
 
 class ToDoItemDetailSerializer(serializers.ModelSerializer):
@@ -76,16 +77,16 @@ class ProjectListSerializer(serializers.ModelSerializer):
 
 
 class SimpleToDoListDetailSerializer(serializers.ModelSerializer):
-    tasks = ToDoItemDetailSerializer(many=True, read_only=True)
+    tasks = ToDoItemDetailSerializer(many=True)
     owner = UserSerializer(read_only=True)
 
     class Meta:
         model = SimpleToDoList
-        fields = ('id', 'name', 'owner', 'tasks')
+        fields = '__all__'
 
 
 class ProjectDetailSerializer(serializers.ModelSerializer):
-    tasks = ToDoItemDetailSerializer(many=True, read_only=True)
+    tasks = ToDoItemDetailSerializer(many=True)
     owner = UserSerializer(read_only=True)
 
     class Meta:

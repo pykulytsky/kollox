@@ -126,12 +126,10 @@ class SimpleToDoList(BaseToDoList):
                             object_id_field='todo_list_id')
     status = models.CharField(choices=TODO_LIST_STATUS, max_length=255, default='not_started', verbose_name="Status")
 
-
     def save(self, *args, **kwargs):
         if self.status not in [s[0] for s in TODO_LIST_STATUS]:
             raise ValueError(f"Not Valid status. Can be {TODO_LIST_STATUS} not {self.status}.")
         super(SimpleToDoList, self).save(*args, **kwargs)
-
 
     class Meta:
         abstract = False
@@ -146,6 +144,7 @@ PROJECT_STATUS = [
     ('not_started', 'Not Started')
 ]
 
+
 class Project(BaseToDoList):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_projects", verbose_name="ToDo-List Owner")
     tasks = GenericRelation('ToDoItem',
@@ -154,27 +153,23 @@ class Project(BaseToDoList):
     percentage_completed = models.DecimalField(verbose_name="Completed Status", default=0, validators=[percent_validation], max_digits=5, decimal_places=2)
     status = models.CharField(choices=PROJECT_STATUS, verbose_name="Status", max_length=256, default='not_started')
 
-
-
     def calculate_percent(self):
         all_tasks = self.tasks.all()
-        print(f"{all_tasks=}")
+
         completed_tasks = []
         for task in all_tasks:
             if task.is_completed == True:
                 completed_tasks.append(task)
-        print(f'{completed_tasks=}')
+        
         try:
             _completed_part = Decimal(str(len(completed_tasks)/self.tasks.count()))
-            print(f'{_completed_part=}')
+
             self.percentage_completed = _completed_part
         except ZeroDivisionError:
             self.percentage_completed = Decimal('0.0')
-        
 
     def __str__(self):
         return f'<Project: {self.name}>'
-
 
     def save(self, *args, **kwargs):
         self.calculate_percent()
@@ -224,27 +219,27 @@ class ToDoItem(models.Model):
     is_favorite = models.BooleanField(default=False, verbose_name='Is favorite')
     is_important = models.BooleanField(default=False, verbose_name='Is Important')
 
-
     def __init__(self, *args, **kwargs):
         super(ToDoItem, self).__init__(*args, **kwargs)
         if self.reminder:
             self.__past_remind_time = self.reminder.remind_time
-        
 
     def save(self, *args, **kwargs):
         if isinstance(self.todo_list_type, Project):
             list_id = self.todo_list.id
             # calculate_percent_signal.send(sender=self, todo_list_id=list_id)
-        self.todo_list.calculate_percent()
+        try:
+            self.todo_list.calculate_percent()
+        except:
+            pass
         self.todo_list.save()
         super(ToDoItem, self).save(*args, **kwargs)
         if self.reminder:
             self.__past_remind_time = self.reminder.remind_time
 
-    
     def __str__(self):
         return f'<ToDoItem {self.pk}:{self.title}>'
 
     class Meta:
-        ordering = ['started_time', 'expired_time', 'is_important', 'is_favorite']
+        ordering = ['is_completed']
         verbose_name = 'ToDo Item'

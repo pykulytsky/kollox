@@ -8,6 +8,9 @@
       :v-key = "n"
       class="col-md-4">
     <v-card
+        link
+        :to="list.todo_list_type == 'project' ? '/project/' + list.data.id : '/simple-todo-list/' +
+        list.data.id"
         class="mx-auto"
         max-width="344"
     >
@@ -179,6 +182,17 @@ export  default {
     },
     loading () {
       return this.$store.getters.loading
+    },
+    linkToList (list) {
+      if (list.todo_list_type == 'simpletodolist') {
+        return '/simple-todo-list/' + list.id
+      }
+      else if  (list.todo_list_type == 'project'){
+        return '/project/' + list.id
+      }
+      else {
+        this.$store.dispatch('setError', "Wrong way.")
+      }
     }
   },
 

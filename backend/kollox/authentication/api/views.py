@@ -24,7 +24,8 @@ class RegistrationAPIView(APIView):
         return Response({
             'token': serializer.data.get('token', None),
             'id': serializer.data.get('id', None)
-        })
+        },
+        status=status.HTTP_201_CREATED)
 
     def get(self, request):
         return Response({

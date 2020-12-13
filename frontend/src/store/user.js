@@ -73,7 +73,7 @@ export default {
                     headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
                 })
                     .then(response => {
-                        console.log(response.data['avatar'])
+                        console.log("load user",response.data)
                         commit('setUser', new User(
                             response.data['pk'],
                             response.data['username'],

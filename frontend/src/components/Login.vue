@@ -99,6 +99,7 @@ export default {
             })
             .catch(error => {
               console.log("error on submit")
+              this.$store.dispatch('setError', error.message)
             })
 
       }

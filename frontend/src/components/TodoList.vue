@@ -15,26 +15,29 @@
               height="200px"
           ></v-img>
           <div class="card__header1">
-            <h2 class="card__header__text">Todo List</h2>
+            <h2 class="card__header__text">{{ todoList.name }}</h2>
             <v-btn
                 icon
-                v-bind="attrs"
                 v-on="on"
             >
               <v-icon>mdi-dots-vertical</v-icon>
             </v-btn>
           </div>
-          <div class="todo__item">
+          <div
+              class="todo__item"
+              v-if="todoList.tasks"
+              v-for="todo in todoList.tasks"
+          >
             <v-checkbox
                 color="indigo"
                 class="item__checkbox"
                 hide-details
             ></v-checkbox>
-            1234
+            {{ todo.title }}
             <v-spacer></v-spacer>
             <v-btn
                 icon
-                v-bind="attrs"
+
                 @click="openDialog"
             >
               <v-icon>mdi-dots-vertical</v-icon>
@@ -48,208 +51,208 @@
               <v-icon>{{ star }}</v-icon>
             </v-btn>
           </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            Lorem ipsum dolor sit.
-            <v-spacer></v-spacer>
-            <v-btn
-                @click="addToFavorite"
-                icon
-                color="indigo"
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            Lorem ipsum dolor sit.-->
+<!--            <v-spacer></v-spacer>-->
+<!--            <v-btn-->
+<!--                @click="addToFavorite"-->
+<!--                icon-->
+<!--                color="indigo"-->
 
-            >
-              <v-icon>{{ star }}</v-icon>
-            </v-btn>
-          </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--            >-->
+<!--              <v-icon>{{ star }}</v-icon>-->
+<!--            </v-btn>-->
+<!--          </div>-->
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            Lorem ipsum dolor sit amet.
-            <v-spacer></v-spacer>
-            <v-btn
-                @click="addToFavorite"
-                icon
-                color="indigo"
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            Lorem ipsum dolor sit amet.-->
+<!--            <v-spacer></v-spacer>-->
+<!--            <v-btn-->
+<!--                @click="addToFavorite"-->
+<!--                icon-->
+<!--                color="indigo"-->
 
-            >
-              <v-icon>{{ star }}</v-icon>
-            </v-btn>
-          </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--            >-->
+<!--              <v-icon>{{ star }}</v-icon>-->
+<!--            </v-btn>-->
+<!--          </div>-->
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            Lorem ipsum dolor sit amet, consectetur.
-            <v-spacer></v-spacer>
-            <v-btn
-                @click="addToFavorite"
-                icon
-                color="indigo"
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            Lorem ipsum dolor sit amet, consectetur.-->
+<!--            <v-spacer></v-spacer>-->
+<!--            <v-btn-->
+<!--                @click="addToFavorite"-->
+<!--                icon-->
+<!--                color="indigo"-->
 
-            >
-              <v-icon>{{ star }}</v-icon>
-            </v-btn>
-          </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--            >-->
+<!--              <v-icon>{{ star }}</v-icon>-->
+<!--            </v-btn>-->
+<!--          </div>-->
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            Lorem ipsum dolor sit.
-            <v-spacer></v-spacer>
-            <v-btn
-                @click="addToFavorite"
-                icon
-                color="indigo"
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            Lorem ipsum dolor sit.-->
+<!--            <v-spacer></v-spacer>-->
+<!--            <v-btn-->
+<!--                @click="addToFavorite"-->
+<!--                icon-->
+<!--                color="indigo"-->
 
-            >
-              <v-icon>{{ star }}</v-icon>
-            </v-btn>
-          </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--            >-->
+<!--              <v-icon>{{ star }}</v-icon>-->
+<!--            </v-btn>-->
+<!--          </div>-->
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            1234
-            <v-spacer></v-spacer>
-            <v-btn
-                @click="addToFavorite"
-                icon
-                color="indigo"
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            1234-->
+<!--            <v-spacer></v-spacer>-->
+<!--            <v-btn-->
+<!--                @click="addToFavorite"-->
+<!--                icon-->
+<!--                color="indigo"-->
 
-            >
-              <v-icon>{{ star }}</v-icon>
-            </v-btn>
-          </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--            >-->
+<!--              <v-icon>{{ star }}</v-icon>-->
+<!--            </v-btn>-->
+<!--          </div>-->
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            Lorem ipsum dolor sit.
-            <v-spacer></v-spacer>
-            <v-btn
-                @click="addToFavorite"
-                icon
-                color="indigo"
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            Lorem ipsum dolor sit.-->
+<!--            <v-spacer></v-spacer>-->
+<!--            <v-btn-->
+<!--                @click="addToFavorite"-->
+<!--                icon-->
+<!--                color="indigo"-->
 
-            >
-              <v-icon>{{ star }}</v-icon>
-            </v-btn>
-          </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--            >-->
+<!--              <v-icon>{{ star }}</v-icon>-->
+<!--            </v-btn>-->
+<!--          </div>-->
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            Lorem ipsum dolor sit amet.
-            <v-spacer></v-spacer>
-            <v-btn
-                @click="addToFavorite"
-                icon
-                color="indigo"
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            Lorem ipsum dolor sit amet.-->
+<!--            <v-spacer></v-spacer>-->
+<!--            <v-btn-->
+<!--                @click="addToFavorite"-->
+<!--                icon-->
+<!--                color="indigo"-->
 
-            >
-              <v-icon>{{ star }}</v-icon>
-            </v-btn>
-          </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--            >-->
+<!--              <v-icon>{{ star }}</v-icon>-->
+<!--            </v-btn>-->
+<!--          </div>-->
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            Lorem ipsum dolor sit amet, consectetur.
-            <v-spacer></v-spacer>
-            <v-btn
-                @click="addToFavorite"
-                icon
-                color="indigo"
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            Lorem ipsum dolor sit amet, consectetur.-->
+<!--            <v-spacer></v-spacer>-->
+<!--            <v-btn-->
+<!--                @click="addToFavorite"-->
+<!--                icon-->
+<!--                color="indigo"-->
 
-            >
-              <v-icon>{{ star }}</v-icon>
-            </v-btn>
-          </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--            >-->
+<!--              <v-icon>{{ star }}</v-icon>-->
+<!--            </v-btn>-->
+<!--          </div>-->
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            Lorem ipsum dolor sit.
-            <v-spacer></v-spacer>
-            <v-btn
-                @click="addToFavorite"
-                icon
-                color="indigo"
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            Lorem ipsum dolor sit.-->
+<!--            <v-spacer></v-spacer>-->
+<!--            <v-btn-->
+<!--                @click="addToFavorite"-->
+<!--                icon-->
+<!--                color="indigo"-->
 
-            >
-              <v-icon>{{ star }}</v-icon>
-            </v-btn>
-          </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--            >-->
+<!--              <v-icon>{{ star }}</v-icon>-->
+<!--            </v-btn>-->
+<!--          </div>-->
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            1234
-          </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            1234-->
+<!--          </div>-->
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            Lorem ipsum dolor sit.
-            <v-spacer></v-spacer>
-            <v-btn
-                @click="addToFavorite"
-                icon
-                color="indigo"
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            Lorem ipsum dolor sit.-->
+<!--            <v-spacer></v-spacer>-->
+<!--            <v-btn-->
+<!--                @click="addToFavorite"-->
+<!--                icon-->
+<!--                color="indigo"-->
 
-            >
-              <v-icon>{{ star }}</v-icon>
-            </v-btn>
-          </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--            >-->
+<!--              <v-icon>{{ star }}</v-icon>-->
+<!--            </v-btn>-->
+<!--          </div>-->
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            Lorem ipsum dolor sit amet.
-          </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            Lorem ipsum dolor sit amet.-->
+<!--          </div>-->
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            Lorem ipsum dolor sit amet, consectetur.
-          </div>
-          <div class="todo__item">
-            <v-checkbox
-                color="indigo"
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            Lorem ipsum dolor sit amet, consectetur.-->
+<!--          </div>-->
+<!--          <div class="todo__item">-->
+<!--            <v-checkbox-->
+<!--                color="indigo"-->
 
-                hide-details
-            ></v-checkbox>
-            Lorem ipsum dolor sit.
-          </div>
+<!--                hide-details-->
+<!--            ></v-checkbox>-->
+<!--            Lorem ipsum dolor sit.-->
+<!--          </div>-->
         </v-card>
       </v-flex>
     </v-layout>
@@ -359,6 +362,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data: () => {
     return {
@@ -369,12 +374,20 @@ export default {
       dialog: false,
       isListFavorite: false,
       heartIcon: 'mdi-heart',
-      heartOutlinedIcon: 'mdi-heart-outline'
+      heartOutlinedIcon: 'mdi-heart-outline',
+
+      todoList: {
+        id: 0,
+        tasks: [],
+        name: '',
+        favorite: false,
+        owner: null
+      }
     }
   },
   computed: {
     star () {
-      if (this.favorite) {
+      if (this.todoList.favorite) {
         return  this.starIcon
       }
       else {
@@ -405,7 +418,27 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$store.getters.user)
+    console.log(this.$route.params)
+    const url = 'http://localhost:8000/api/todo/simple-todo-list/' + this.$route.params['id'] + '/'
+    const config = {
+      headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+    };
+
+    axios.get(url, config)
+    .then( response => {
+      this.todoList.id = response.data.id
+      this.todoList.name = response.data.name
+      this.todoList.owner = response.data.owner
+      this.todoList.favorite = response.data.favorite
+      this.todoList.tasks = response.data.tasks
+
+    })
+    .catch(error => {
+      this.$store.dispatch('setError', error.message)
+    })
+
+
+    console.log("Tasks: " ,this.todoList.tasks)
   }
 
 }
