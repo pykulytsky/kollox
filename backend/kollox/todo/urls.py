@@ -9,5 +9,6 @@ urlpatterns = [
     path('simple-todo-lists/', ProjectListAPIView.as_view(), name="projects"),
     path('simple-todo-list/<int:id>/', SimpleToDoListDetailAPIView.as_view(), name="project"),
     path('todos/', ToDoItemListView.as_view(), name="todo_items_list"),
-    path('todo/<int:id>/', ToDoItemDetailView.as_view(), name="todo_item_detail")
+    path('todo/<int:id>/', ToDoItemDetailView.as_view(), name="todo_item_detail"),
+    path('todos/favorite/', FavoriteToDoItemListView.as_view(), name="favorite_todos")
 ]

@@ -10,8 +10,9 @@
       <v-list>
         <v-list-item class="px-2">
           <v-list-item-avatar>
-            <v-img
-                src="noimage.jpg"></v-img>
+
+            <v-img v-if="user.avatar"
+                :src="user.avatar"></v-img>
           </v-list-item-avatar>
         </v-list-item>
 

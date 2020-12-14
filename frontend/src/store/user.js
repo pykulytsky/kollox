@@ -10,7 +10,7 @@ class Auth {
 }
 
 class User {
-    constructor(id, username, email, firstName='', lastName='', emailVerified=false ,avatar = '') {
+    constructor(id, username, email, firstName, lastName, emailVerified ,avatar ) {
         this.id = id
         this.username = username
         this.email = email

@@ -11,6 +11,7 @@ import Profile from "@/components/Profile";
 import store from '../store'
 import Projects from "@/components/Projects";
 import Project from "@/components/Project";
+import ImportantTodos from "@/components/ImportantTodos";
 
 Vue.use(VueRouter)
 
@@ -108,7 +109,20 @@ const routes = [
         next('/login')
       }
     }
-  }
+  },
+    {
+        path: '/important',
+        component: ImportantTodos,
+        beforeEnter(to, from, next) {
+            if (JSON.parse(localStorage.getItem('auth'))['token']) {
+                store.dispatch('loadUser')
+                next()
+            }
+            else {
+                next('/login')
+            }
+        }
+    }
 ]
 
 const router = new VueRouter({

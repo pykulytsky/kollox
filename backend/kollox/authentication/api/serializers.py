@@ -51,13 +51,26 @@ class LoginSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = ('pk', 'username', 'first_name', 'last_name', 'email_verified', 'avatar')
 
+    def get_avatar(self, user):
+        request = self.context.get('request')
+        avatar = user.avatar.url
+        return request.build_absolute_uri(avatar)
+
 
 class UserDetailSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'age', "is_superuser", 'email_verified')
+        fields = ('username', 'email', 'first_name', 'last_name', 'age', "is_superuser", 'email_verified', 'avatar')
 
+    def get_avatar(self, user):
+        request = self.context.get('request')
+        avatar = user.avatar.url
+        return request.build_absolute_uri(avatar)

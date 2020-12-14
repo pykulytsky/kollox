@@ -60,6 +60,7 @@
 const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
 export default {
 
+  // TODO Fix double loading on login and registration
   data: () => {
     return {
       valid: false,

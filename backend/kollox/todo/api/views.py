@@ -29,7 +29,7 @@ class AllToDoListAPIView(APIView):
 
         for entry in combined_queryset:
             item_type = entry.__class__.__name__.lower()
-            serializer = BaseToDoListSerializer(entry)
+            serializer = BaseToDoListSerializer(entry, context={"request": request})
 
             resulted_query.append({'todo_list_type': item_type, 'data': serializer.data})
 
@@ -135,9 +135,32 @@ class ToDoItemListView(generics.ListCreateAPIView):
     serializer_class = ToDoItemSerializer
 
     def get_queryset(self, request):
+        _user = request.user
+        if 'list_id' in request.data.keys() and 'list_type' in request.data.keys():
+            queryset = ToDoItem.objects.filter(
+                todo_list_id=request.data['list_id'],
+                todo_list_type=request.data['list_type'],
+                # todo_list__owner=_user
+                ).order_by('id')
+        else:
+            queryset = ToDoItem.objects.all().order_by('id')
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        serializer = self.serializer_class(self.get_queryset(request), many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class FavoriteToDoItemListView(generics.ListAPIView):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = ToDoItemSerializer
+
+    def get_queryset(self, request):
+        _user = request.user
         queryset = ToDoItem.objects.filter(
-            todo_list_id=request.data['list_id'],
-            todo_list_type=request.data['list_type'])
+            is_favorite=True,
+            todo_list__owner=_user).order_by('id')
         return queryset
 
     def list(self, request, *args, **kwargs):

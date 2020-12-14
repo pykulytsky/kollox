@@ -13,9 +13,11 @@ from authentication.validators import percent_validation
 from django.forms.models import model_to_dict
 
 import django.dispatch
+
 # Create your models here.
 
 calculate_percent_signal = django.dispatch.Signal(providing_args=['todo_list_id'])
+
 
 class QuerySetChain(object):
     """
@@ -50,16 +52,17 @@ class QuerySetChain(object):
         if type(ndx) is slice:
             return list(islice(self._all(), ndx.start, ndx.stop, ndx.step or 1))
         else:
-            return islice(self._all(), ndx, ndx+1).next()
+            return islice(self._all(), ndx, ndx + 1).next()
+
 
 class ModelDiffMixin(object):
     """
     Mixin that detects changes in model fields.
     """
+
     def __init__(self, *args, **kwargs):
         super(ModelDiffMixin, self).__init__(*args, **kwargs)
         self.__initial = self._dict
-
 
     @property
     def diff(self):
@@ -68,23 +71,19 @@ class ModelDiffMixin(object):
         diffs = [(k, (v, d2[k])) for k, v in d1.items() if v != d2[k]]
         return dict(diffs)
 
-
     @property
     def has_changed(self):
         return bool(self.diff)
 
-
     @property
     def changed_fields(self):
         return self.diff.keys()
-
 
     def get_field_diff(self, field_name):
         """
         Returns a diff for field if it's changed and None otherwise.
         """
         return self.diff.get(field_name, None)
-
 
     def save(self, *args, **kwargs):
         """
@@ -93,11 +92,10 @@ class ModelDiffMixin(object):
         super(ModelDiffMixin, self).save(*args, **kwargs)
         self.__initial = self._dict
 
-
     @property
     def _dict(self):
         return model_to_dict(self, fields=[field.name for field in
-                             self._meta.fields])
+                                           self._meta.fields])
 
 
 class BaseToDoList(models.Model):
@@ -106,6 +104,7 @@ class BaseToDoList(models.Model):
     name = models.CharField(max_length=512, verbose_name="ToDo-List Name")
 
     favorite = models.BooleanField(default=False, verbose_name="is Favorite")
+
     class Meta:
         abstract = True
 
@@ -120,7 +119,8 @@ TODO_LIST_STATUS = [
 
 
 class SimpleToDoList(BaseToDoList):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_simple_todo_lists", verbose_name="ToDo-List Owner")
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_simple_todo_lists",
+                              verbose_name="ToDo-List Owner")
     tasks = GenericRelation('ToDoItem',
                             content_type_field='todo_list_type',
                             object_id_field='todo_list_id')
@@ -134,7 +134,7 @@ class SimpleToDoList(BaseToDoList):
     class Meta:
         abstract = False
         verbose_name = 'Simple ToDo List'
-    
+
 
 PROJECT_STATUS = [
     ('in_archive', 'In Archive'),
@@ -146,11 +146,13 @@ PROJECT_STATUS = [
 
 
 class Project(BaseToDoList):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_projects", verbose_name="ToDo-List Owner")
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_projects",
+                              verbose_name="ToDo-List Owner")
     tasks = GenericRelation('ToDoItem',
                             content_type_field='todo_list_type',
                             object_id_field='todo_list_id')
-    percentage_completed = models.DecimalField(verbose_name="Completed Status", default=0, validators=[percent_validation], max_digits=5, decimal_places=2)
+    percentage_completed = models.DecimalField(verbose_name="Completed Status", default=0,
+                                               validators=[percent_validation], max_digits=5, decimal_places=2)
     status = models.CharField(choices=PROJECT_STATUS, verbose_name="Status", max_length=256, default='not_started')
 
     def calculate_percent(self):
@@ -160,9 +162,9 @@ class Project(BaseToDoList):
         for task in all_tasks:
             if task.is_completed == True:
                 completed_tasks.append(task)
-        
+
         try:
-            _completed_part = Decimal(str(len(completed_tasks)/self.tasks.count()))
+            _completed_part = Decimal(str(len(completed_tasks) / self.tasks.count()))
 
             self.percentage_completed = _completed_part
         except ZeroDivisionError:
@@ -178,7 +180,7 @@ class Project(BaseToDoList):
         super().save(*args, **kwargs)
 
 
-TODO_ITEM_REAPET = [
+TODO_ITEM_REPEAT = [
     ('none', 'None'),
     ('every_day', 'Everyday'),
     ('every_hour', 'Every hour'),
@@ -190,13 +192,12 @@ class Reminder(models.Model):
     remind_time = models.DateTimeField(blank=True, verbose_name="Remind Time", null=True)
 
     is_repited = models.BooleanField(default=False, verbose_name="Repeat?")
-    repeat_frequency = models.CharField(blank=True, max_length=256, choices=TODO_ITEM_REAPET, default='none')
-
+    repeat_frequency = models.CharField(blank=True, max_length=256, choices=TODO_ITEM_REPEAT, default='none')
 
     class Meta:
         verbose_name = 'Reminder'
         ordering = ['remind_time']
-    
+
 
 class ToDoItem(models.Model):
     title = models.CharField(max_length=512, verbose_name="Task Title")
@@ -209,9 +210,10 @@ class ToDoItem(models.Model):
     attached_file = models.FileField(upload_to=f'files/', blank=True)
     attached_photo = models.ImageField(upload_to='images/', blank=True)
 
-    reminder  = models.OneToOneField(Reminder, on_delete=models.PROTECT, related_name="reminder_task", blank=True, null=True)
+    reminder = models.OneToOneField(Reminder, on_delete=models.PROTECT, related_name="reminder_task", blank=True,
+                                    null=True)
     remind_me = models.BooleanField(default=False)
-    
+
     is_completed = models.BooleanField(default=False, verbose_name="Is Completed")
     started_time = models.DateTimeField(auto_now=True, verbose_name='Started time')
     expired_time = models.DateTimeField(verbose_name="Expired Time", blank=True, null=True)
@@ -227,6 +229,7 @@ class ToDoItem(models.Model):
     def save(self, *args, **kwargs):
         if isinstance(self.todo_list_type, Project):
             list_id = self.todo_list.id
+            self.todo_list.calculate_percent()
             # calculate_percent_signal.send(sender=self, todo_list_id=list_id)
         try:
             self.todo_list.calculate_percent()
@@ -241,5 +244,5 @@ class ToDoItem(models.Model):
         return f'<ToDoItem {self.pk}:{self.title}>'
 
     class Meta:
-        ordering = ['is_completed']
-        verbose_name = 'ToDo Item'
+        ordering = ['-started_time', 'is_completed']
+        verbose_name = 'Todo Item'

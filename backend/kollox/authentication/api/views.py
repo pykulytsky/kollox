@@ -51,9 +51,12 @@ class UserAPIView(APIView):
     def get(self, request, id):
         _user = User.objects.get(id=id)
 
-        serializer = self.serializer_class(_user)
+        serializer = self.serializer_class(_user, context={"request": request})
         return Response(serializer.data,
                         status=status.HTTP_200_OK)
+
+    def patch(self, request, id):
+        _user = User.objects.get(id=id)
 
 
 @api_view(['POST'])

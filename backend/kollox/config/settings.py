@@ -156,5 +156,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 import os
 
-MEDIA_ROOT = os.path.join('d:/repos/kollox/frontend/src/assets')
+MEDIA_ROOT = 'D:/repos/kollox/frontend/src/assets/'
 MEDIA_URL = '/assets/'
