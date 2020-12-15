@@ -12,6 +12,7 @@ import store from '../store'
 import Projects from "@/components/Projects";
 import Project from "@/components/Project";
 import ImportantTodos from "@/components/ImportantTodos";
+import ErrorPage from "@/components/ErrorPage.vue";
 
 Vue.use(VueRouter)
 
@@ -31,6 +32,11 @@ const routes = [
     }
   },
 
+  {
+    path: '/404',
+    component: ErrorPage,
+    name: '404'
+  },
 
   {
     path: '/project/:id',

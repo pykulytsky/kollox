@@ -9,7 +9,7 @@
             max-height="300px"
             max-width="300px"
             class="main__img"
-        src="https://images.unsplash.com/photo-1607453998792-051fed7d2631?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80"
+        :src="user.avatar"
         ></v-img>
         <h2
         class="name"

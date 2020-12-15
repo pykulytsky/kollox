@@ -149,7 +149,11 @@ export default {
       }
       return rules
     }
-  }
+  },
+  beforeMount() {
+    this.$store.dispatch('clearUser')
+    this.$store.dispatch('clearAuth')
+  },
 }
 </script>
 

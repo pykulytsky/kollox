@@ -9,9 +9,9 @@
     >
       <v-list>
         <v-list-item class="px-2">
-          <v-list-item-avatar>
+          <v-list-item-avatar v-if="isUserHasAvatar">
 
-            <v-img v-if="user.avatar"
+            <v-img
                 :src="user.avatar"></v-img>
           </v-list-item-avatar>
         </v-list-item>
@@ -131,11 +131,13 @@
 
       </router-view>
       <v-snackbar
+          class="error__bar"
           v-if="error"
           timeout="3000"
           :value="true"
       >
         {{ error }}
+
           <v-btn
               color="pink"
               @click="closeError"
@@ -253,6 +255,15 @@ export default {
       }
     },
 
+    isUserHasAvatar () {
+      try {
+        return !!this.user.avatar
+      }
+      catch (error) {
+        return false
+      }
+    },
+
     isUserAuthenticated () {
       return this.$store.getters.isAuthenticated
     }
@@ -268,18 +279,24 @@ export default {
       this.$store.dispatch('clearError')
     }
   },
-  updated() {
-    console.log("Storage: ",localStorage.getItem('auth'))
-
-  },
-  mounted() {
-    console.log("Storage: ",localStorage.getItem('auth'))
-    this.$store.dispatch('loadUser')
-    this.$store.dispatch('autoLogin')
-  },
+  // updated() {
+  //   console.log("Storage: ",localStorage.getItem('auth'))
+  //
+  // },
+  // mounted() {
+  //   console.log("Storage: ",localStorage.getItem('auth'))
+  //   this.$store.dispatch('loadUser')
+  //   this.$store.dispatch('autoLogin')
+  // },
   beforeCreate() {
-    this.$store.dispatch('loadUser')
-    this.$store.dispatch('autoLogin')
+    try {
+      this.$store.dispatch('loadUser')
+      this.$store.dispatch('autoLogin')
+    }
+    catch (error) {
+      this.$store.dispatch('setError', error.message)
+      this.$router.push('/404')
+    }
   }
 
 };
@@ -337,5 +354,9 @@ p {
   border: 0;
 }
 
+.error__bar {
+  display: flex;
+  justify-content: space-between;
+}
 
 </style>

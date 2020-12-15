@@ -104,6 +104,8 @@ class BaseToDoList(models.Model):
     name = models.CharField(max_length=512, verbose_name="ToDo-List Name")
 
     favorite = models.BooleanField(default=False, verbose_name="is Favorite")
+    cover = models.ImageField(upload_to="assets/avatars/",
+                              default="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg")
 
     class Meta:
         abstract = True
@@ -113,7 +115,7 @@ TODO_LIST_STATUS = [
     ('in_archive', 'In Archive'),
     ('started', 'Started'),
     ('completed', 'Completed'),
-    ('not_complted', 'Not Completed'),
+    ('not_completed', 'Not Completed'),
     ('not_started', 'Not Started')
 ]
 
@@ -123,7 +125,8 @@ class SimpleToDoList(BaseToDoList):
                               verbose_name="ToDo-List Owner")
     tasks = GenericRelation('ToDoItem',
                             content_type_field='todo_list_type',
-                            object_id_field='todo_list_id')
+                            object_id_field='todo_list_id',
+                            related_query_name="simple_todo_list")
     status = models.CharField(choices=TODO_LIST_STATUS, max_length=255, default='not_started', verbose_name="Status")
 
     def save(self, *args, **kwargs):
@@ -150,14 +153,15 @@ class Project(BaseToDoList):
                               verbose_name="ToDo-List Owner")
     tasks = GenericRelation('ToDoItem',
                             content_type_field='todo_list_type',
-                            object_id_field='todo_list_id')
+                            object_id_field='todo_list_id',
+                            related_query_name="project")
     percentage_completed = models.DecimalField(verbose_name="Completed Status", default=0,
                                                validators=[percent_validation], max_digits=5, decimal_places=2)
     status = models.CharField(choices=PROJECT_STATUS, verbose_name="Status", max_length=256, default='not_started')
 
     def calculate_percent(self):
         all_tasks = self.tasks.all()
-
+        # TODO Move percent calculation to frontend
         completed_tasks = []
         for task in all_tasks:
             if task.is_completed == True:

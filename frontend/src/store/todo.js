@@ -48,7 +48,30 @@ export default {
             commit('addTodo', payload)
             commit('setLoading', true)
         },
-        loadAllTodoLists ({commit}) {
+
+        async loadProject ({commit, getters}, payload) {
+            const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
+            const config = {
+                headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+            };
+
+            await axios.get(url, config)
+                .then( response => {
+                    getters.todoList.id = response.data.id
+                    this.todoList.name = response.data.name
+                    this.todoList.owner = response.data.owner
+                    this.todoList.favorite = response.data.favorite
+                    this.todoList.tasks = response.data.tasks
+                    this.todoList.percentageCompleted = response.data.percentage_completed
+                    this.todoList.percentageCompleted *= 100
+                    console.log("%: ", this.percentageCompleted)
+                    console.log("response %: ", response.data.percentage_completed)
+                })
+                .catch(error => {
+                    this.$store.dispatch('setError', error.message)
+                })
+        },
+        async loadAllTodoLists ({commit}) {
             commit('setLoading', true)
             commit('clearError')
 
@@ -57,7 +80,7 @@ export default {
             };
             const url = 'http://localhost:8000/api/todo/all-todo-lists/'
 
-            axios.get(url, config)
+            await axios.get(url, config)
                 .then(response => {
                     console.log("Success loading todos: ", response.data)
                     commit('setAllLists', response.data)
@@ -67,7 +90,57 @@ export default {
                 })
 
             commit('setLoading', false)
-        }
+        },
+
+        async completeTask({commit, getters}, payload) {
+            const url = 'http://127.0.0.1:8000/api/todo/todo/' + payload.todo_id + '/'
+            const config = {
+                headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+            };
+            const todo = getters.todo.filter(task => {
+                return task ? task.id === payload.todo_id: null
+            })[0]
+
+            // TODO Fix reloading
+
+            console.log("Complete task: ",todo)
+            // TODO Update request, to update not all list, actually specific todo item
+            console.log("% before : ", this.todoList.percentageCompleted)
+            await axios.patch(url, {
+                is_completed: todo.is_completed
+            },{
+                headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+            })
+                .then(response => {
+                    this.$store.dispatch('setLoading', true)
+                    setTimeout(() => {
+                            const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
+                            const config = {
+                                headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+                            };
+
+                            axios.get(url, config)
+                                .then( response => {
+                                    this.todoList.id = response.data.id
+                                    this.todoList.name = response.data.name
+                                    this.todoList.owner = response.data.owner
+                                    this.todoList.favorite = response.data.favorite
+                                    this.todoList.tasks = response.data.tasks
+                                    this.todoList.percentageCompleted = response.data.percentage_completed
+                                    this.todoList.percentageCompleted *= 100
+                                    console.log("% after: ", this.todoList.percentageCompleted)
+                                    this.$store.dispatch('setLoading', false)
+                                })
+                                .catch(error => {
+                                    this.$store.dispatch('setError', error.message)
+                                    this.$store.dispatch('setLoading', false)
+                                })
+                        },
+                        1000
+                    )
+
+                })
+        },
     },
     getters: {
         allLists (state) {

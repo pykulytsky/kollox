@@ -137,13 +137,27 @@ class ToDoItemListView(generics.ListCreateAPIView):
     def get_queryset(self, request):
         _user = request.user
         if 'list_id' in request.data.keys() and 'list_type' in request.data.keys():
-            queryset = ToDoItem.objects.filter(
-                todo_list_id=request.data['list_id'],
-                todo_list_type=request.data['list_type'],
-                # todo_list__owner=_user
+            if request.data['list_type'] == 10:
+                queryset = ToDoItem.objects.filter(
+                    todo_list_id=request.data['list_id'],
+                    todo_list_type=request.data['list_type'],
+                    project__owner=_user
+                    ).order_by('id')
+            else:
+                queryset = ToDoItem.objects.filter(
+                    todo_list_id=request.data['list_id'],
+                    todo_list_type=request.data['list_type'],
+                    simple_todo_list__owner=_user
                 ).order_by('id')
         else:
-            queryset = ToDoItem.objects.all().order_by('id')
+            try:
+                queryset = ToDoItem.objects.filter(
+                    project__owner=_user
+                ).order_by('id')
+            except:
+                queryset = ToDoItem.objects.filter(
+                    simple_todo_list__owner=_user
+                ).order_by('id')
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -157,10 +171,34 @@ class FavoriteToDoItemListView(generics.ListAPIView):
     serializer_class = ToDoItemSerializer
 
     def get_queryset(self, request):
+
         _user = request.user
-        queryset = ToDoItem.objects.filter(
-            is_favorite=True,
-            todo_list__owner=_user).order_by('id')
+        if 'list_id' in request.data.keys() and 'list_type' in request.data.keys():
+            if request.data['list_type'] == 10:
+                queryset = ToDoItem.objects.filter(
+                    todo_list_id=request.data['list_id'],
+                    todo_list_type=request.data['list_type'],
+                    project__owner=_user,
+                    is_favorite=True
+                ).order_by('id')
+            else:
+                queryset = ToDoItem.objects.filter(
+                    todo_list_id=request.data['list_id'],
+                    todo_list_type=request.data['list_type'],
+                    simple_todo_list__owner=_user,
+                    is_favorite=True
+                ).order_by('id')
+        else:
+            try:
+                queryset = ToDoItem.objects.filter(
+                    is_favorite=True,
+                    project__owner=_user
+                ).order_by('id')
+            except:
+                queryset = ToDoItem.objects.filter(
+                    is_favorite=True,
+                    simple_todo_list__owner=_user
+                ).order_by('id')
         return queryset
 
     def list(self, request, *args, **kwargs):

@@ -31,16 +31,16 @@ export default {
         setAuth (state, payload) {
             state.auth = payload
         },
-        clearAuth(state) {
+        async clearAuth(state) {
             state.auth = null
-            localStorage.clear()
+            await localStorage.clear()
         },
         setUser (state, payload) {
             state.user = payload
         },
-        clearUser(state) {
+        async clearUser(state) {
             state.auth = null
-            localStorage.clear()
+            await localStorage.clear()
         }
     },
 
@@ -64,12 +64,12 @@ export default {
             commit('clearAuth')
         },
 
-        loadUser({commit}) {
+        async loadUser({commit}) {
             commit('setLoading', true)
             commit('clearError')
 
             if (JSON.parse(localStorage.getItem('auth'))) {
-                axios.get(`http://localhost:8000/api/auth/user/${JSON.parse(localStorage.getItem('auth'))['pk']}`, {
+                await axios.get(`http://localhost:8000/api/auth/user/${JSON.parse(localStorage.getItem('auth'))['pk']}`, {
                     headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
                 })
                     .then(response => {
@@ -97,11 +97,11 @@ export default {
         },
 
 
-        registerUser({commit}, payload) {
+        async registerUser({commit}, payload) {
             commit('setLoading', true)
             commit('clearError')
 
-            axios.post('http://localhost:8000/api/auth/register/', payload)
+            await axios.post('http://localhost:8000/api/auth/register/', payload)
                 .then(response => {
                     commit('setAuth', new Auth(response.data.token))
                     console.log(response)
@@ -117,11 +117,11 @@ export default {
             commit('setLoading', false)
         },
 
-        loginUser({commit}, payload) {
+        async loginUser({commit}, payload) {
             commit('setLoading', true)
             commit('clearError')
 
-            axios.post('http://localhost:8000/api/auth/login/', payload)
+            await axios.post('http://localhost:8000/api/auth/login/', payload)
                 .then(response => {
                     if (response.status == 200) {
                         commit('setAuth', new Auth(response.data.token))
@@ -148,7 +148,7 @@ export default {
             commit('setLoading', false)
         },
 
-        autoLogin({commit}) {
+        async autoLogin({commit}) {
             commit('setLoading', true)
             commit('clearError')
             if (JSON.parse(localStorage.getItem('auth'))) {
