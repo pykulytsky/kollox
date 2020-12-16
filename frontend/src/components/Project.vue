@@ -16,6 +16,15 @@
           ></v-img>
           <div class="card__header1">
             <h2 class="card__header__text">{{ todoList.name }}</h2>
+            <v-progress-circular
+                :rotate="360"
+                :size="100"
+                :width="15"
+                :value="percent"
+                color="deep-purple accent-4"
+            >
+              {{ percent }}%
+            </v-progress-circular>
             <v-btn
                 icon
             >
@@ -23,14 +32,6 @@
             </v-btn>
           </div>
 
-          <v-container>
-            <v-progress-linear
-                class="project__progress"
-                v-model="todoList.percentageCompleted"
-                color="indigo"
-            >
-            </v-progress-linear>
-          </v-container>
           <div class="new__todo">
             <v-text-field
                 v-model="newTodo"
@@ -38,6 +39,65 @@
             label="Add new todo"
             >
             </v-text-field>
+<!--            <v-btn-->
+<!--                v-if="!datePicker"-->
+<!--              icon-->
+<!--              >-->
+<!--              <v-icon>-->
+<!--                mdi-calendar-->
+<!--              </v-icon>-->
+<!--            </v-btn>-->
+
+            <v-menu
+                ref="menu"
+                v-model="menu"
+                :close-on-content-click="false"
+                :return-value.sync="date"
+                transition="scale-transition"
+                offset-y
+                min-width="290px"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    v-if="!datePicker"
+                    icon
+                >
+                  <v-icon
+                  >
+                    mdi-calendar
+                  </v-icon>
+                </v-btn>
+              </template>
+              <v-date-picker
+                  v-model="date"
+                  no-title
+                  color="deep-purple"
+                  scrollable
+                  :min="todayDate"
+              >
+                <v-spacer></v-spacer>
+                <v-btn
+                    text
+                    color="primary"
+                    @click="menu = false"
+                >
+                  Cancel
+                </v-btn>
+                <v-btn
+                    text
+                    color="primary"
+                    @click="$refs.menu.save(date)"
+                >
+                  OK
+                </v-btn>
+              </v-date-picker>
+            </v-menu>
+
+<!--
+-->
+
             <v-btn
                 icon
                 @click="addTodo"
@@ -60,7 +120,23 @@
                 @click="completeTask(todo.id)"
                 hide-details
             ></v-checkbox>
-            {{ todo.title }}
+
+            <p
+            :class="{'completed-task': todo.is_completed}"
+            >{{ todo.title }}</p>
+
+            <p
+            :class="{'date__info': true, 'red--text': todo.expired_time < todayDate, 'green--text':
+            todo.expired_time > todayDate}"
+            v-if="todo.expired_time"
+            >
+              <v-icon
+              small
+            >
+                mdi-calendar
+              </v-icon>
+              {{new Date(todo.expired_time).toDateString()}}
+            </p>
             <v-spacer></v-spacer>
             <v-btn
                 icon
@@ -68,6 +144,8 @@
                 @click="openDialog"
             >
               <v-icon>mdi-dots-vertical</v-icon>
+              <p
+              ></p>
             </v-btn>
             <v-btn
                 @click="addToFavorite(todo.id)"
@@ -78,6 +156,7 @@
               <v-icon
               v-if="todo.is_favorite"
               >mdi-star</v-icon>
+
               <v-icon
               v-else
               >mdi-star-outline</v-icon>
@@ -412,6 +491,11 @@ export default {
       isListFavorite: false,
       heartIcon: 'mdi-heart',
       heartOutlinedIcon: 'mdi-heart-outline',
+      datePicker: false,
+
+      date: new Date().toISOString().substr(0, 10),
+      menu: false,
+      todayDate: new Date().toISOString().substr(0, 10),
 
       todoList: {
         id: 0,
@@ -438,6 +522,27 @@ export default {
 
     loading () {
       return this.$store.getters.loading
+    },
+
+    percent () {
+      let totalTodoCount = this.todoList.tasks.length
+
+      let totalCompletedTasks = 0
+      // for (task in this.todoList.tasks) {
+      //   if (task.is_completed) {
+      //     totalCompletedTasks ++
+      //   }
+      // }
+      this.todoList.tasks.forEach(task => {
+        if (task.is_completed) {
+             totalCompletedTasks ++
+        }
+      })
+
+
+      let percentCompleted = Math.round((totalCompletedTasks / totalTodoCount) * 100)
+      return percentCompleted
+
     }
 
   },
@@ -564,14 +669,19 @@ export default {
       const config = {
         headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
       };
+
+      const date = this.date.toString() + "T00:00"
+
       axios.post(url, {
         title: this.newTodo,
         todo_list_id: this.$route.params['id'],
-        todo_list_type: this.todoType
+        todo_list_type: this.todoType,
+        expired_time: date
       }, {
         headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
       })
       .then(response => {
+        this.date = new Date().toISOString().substr(0, 10),
         this.newTodo = ''
         console.log(response.data)
         const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
@@ -627,6 +737,8 @@ export default {
       headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
     };
 
+
+    console.log("Date: ", this.date)
     // axios.get(url, config)
     //     .then( response => {
     //       this.todoList.id = response.data.id
@@ -719,6 +831,7 @@ p {
   margin: 25px 15px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .header__image {
@@ -741,4 +854,16 @@ p {
 
 }
 
+.progress__section {
+  display: flex;
+  justify-content: center;
+}
+
+.date__info {
+  margin-left: 10px;
+}
+
+.completed-task {
+  text-decoration: line-through;
+}
 </style>

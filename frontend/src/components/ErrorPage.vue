@@ -24,7 +24,11 @@ export default {
   top: 50%;
   transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+.main__section h1 {
+  font-size: 115px;
 }
 </style>

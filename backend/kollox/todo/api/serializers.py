@@ -45,7 +45,8 @@ class ToDoItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ToDoItem
-        fields = ('id', 'title', 'is_completed', 'is_favorite', 'is_important', 'todo_list_id', 'todo_list_type')
+        fields = ('id', 'title', 'is_completed', 'is_favorite', 'is_important', 'todo_list_id', 'todo_list_type',
+                  'started_time', 'expired_time')
 
 
 class ToDoItemDetailSerializer(serializers.ModelSerializer):

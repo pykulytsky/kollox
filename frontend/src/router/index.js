@@ -33,12 +33,6 @@ const routes = [
   },
 
   {
-    path: '/404',
-    component: ErrorPage,
-    name: '404'
-  },
-
-  {
     path: '/project/:id',
     component: Project,
     name: 'projects',
@@ -128,7 +122,12 @@ const routes = [
                 next('/login')
             }
         }
-    }
+    },
+  {
+    path: '*',
+    component: ErrorPage,
+    name: '404'
+  },
 ]
 
 const router = new VueRouter({

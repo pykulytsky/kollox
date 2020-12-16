@@ -228,7 +228,8 @@ export  default {
 
   },
   updated() {
-    console.log(this.todoListType)
+    console.log(this.$route)
+
   }
 }
 

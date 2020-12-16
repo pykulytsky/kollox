@@ -8,12 +8,19 @@
 
     >
       <v-list>
-        <v-list-item class="px-2">
+        <v-list-item class="px-2" v-if="user">
           <v-list-item-avatar v-if="isUserHasAvatar">
 
             <v-img
                 :src="user.avatar"></v-img>
           </v-list-item-avatar>
+          <v-avatar
+              v-else
+              color="indigo">
+            <v-icon dark>
+              mdi-account-circle
+            </v-icon>
+          </v-avatar>
         </v-list-item>
 
         <v-list-item
@@ -73,6 +80,7 @@
       <v-spacer></v-spacer>
 
       <v-btn
+          v-if="currentRoute.params !== {}"
           @click="isListFavorite = !isListFavorite"
           icon>
         <v-icon>{{heart}}</v-icon>
@@ -139,7 +147,8 @@
         {{ error }}
 
           <v-btn
-              color="pink"
+              class="err_btn"
+              color="deep-purple"
               @click="closeError"
           >
             Close
@@ -266,6 +275,10 @@ export default {
 
     isUserAuthenticated () {
       return this.$store.getters.isAuthenticated
+    },
+
+    currentRoute () {
+      return this.$route
     }
   },
   methods: {
@@ -355,8 +368,12 @@ p {
 }
 
 .error__bar {
+  padding: 0;
   display: flex;
   justify-content: space-between;
+}
+.err_btn {
+  margin-left: 130px;
 }
 
 </style>

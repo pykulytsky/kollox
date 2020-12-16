@@ -166,10 +166,8 @@ class Project(BaseToDoList):
         for task in all_tasks:
             if task.is_completed == True:
                 completed_tasks.append(task)
-
         try:
             _completed_part = Decimal(str(len(completed_tasks) / self.tasks.count()))
-
             self.percentage_completed = _completed_part
         except ZeroDivisionError:
             self.percentage_completed = Decimal('0.0')
