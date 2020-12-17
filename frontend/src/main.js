@@ -4,9 +4,12 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
 import VueResource from "vue-resource";
+import VueSelectImage from 'vue-select-image'
+require('vue-select-image/dist/vue-select-image.css')
 
 Vue.config.productionTip = false
 Vue.use(VueResource)
+Vue.use(VueSelectImage)
 
 new Vue({
     router,

@@ -25,13 +25,36 @@
             >
               {{ percent }}%
             </v-progress-circular>
-            <v-btn
-                icon
+
+
+            <v-menu
+                left
+                bottom
             >
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+
+              <v-list>
+                <v-list-item
+                  @click="coverPicker = true"
+                  >
+                  <v-list-item-title>
+                    Add cover</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+
           </div>
 
+
+<!--          NEW TODO-->
           <div class="new__todo">
             <v-text-field
                 v-model="newTodo"
@@ -125,7 +148,7 @@
             :class="{'completed-task': todo.is_completed}"
             >{{ todo.title }}</p>
 
-            <p
+            <small
             :class="{'date__info': true, 'red--text': todo.expired_time < todayDate, 'green--text':
             todo.expired_time > todayDate}"
             v-if="todo.expired_time"
@@ -136,7 +159,7 @@
                 mdi-calendar
               </v-icon>
               {{new Date(todo.expired_time).toDateString()}}
-            </p>
+            </small>
             <v-spacer></v-spacer>
             <v-btn
                 icon
@@ -372,6 +395,53 @@
         </v-card>
       </v-flex>
     </v-layout>
+
+
+    <v-dialog
+    v-model="coverPicker"
+    persistent
+    max-width="900px"
+    >
+
+    <v-card>
+      <v-card-title>
+        <span class="headline">Choose cover of todo list</span>
+      </v-card-title>
+      <v-card-text>
+        <v-container>
+          <vue-select-image
+              :dataImages="covers"
+              :is-multiple="false"
+              @onselectimage="onSelectCover"
+              :h="'250px'"
+              :w="'300px'"
+              >
+
+          </vue-select-image>
+        </v-container>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+            color="blue darken-1"
+            text
+            @click="coverPicker = false"
+        >
+          Close
+        </v-btn>
+        <v-btn
+            color="blue darken-1"
+            text
+            @click="chooseCover"
+        >
+          Save
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+    </v-dialog>
+
+
+
     <v-dialog
         v-model="dialog"
         persistent
@@ -496,6 +566,7 @@ export default {
       date: new Date().toISOString().substr(0, 10),
       menu: false,
       todayDate: new Date().toISOString().substr(0, 10),
+      dateRequired: false,
 
       todoList: {
         id: 0,
@@ -506,7 +577,62 @@ export default {
         percentageCompleted: 0.0
       },
       newTodo: '',
-      todoType: 10
+      todoType: 10,
+
+      covers: [
+        {
+          id: 1,
+          src: require('@/assets/cover1.jpg'),
+        },
+        {
+          id: 2,
+          src: require('@/assets/cover2.jpg'),
+        },
+        {
+          id: 3,
+          src: require('@/assets/cover3.jpg'),
+        },
+        {
+          id: 4,
+          src: require('@/assets/cover4.jpg'),
+        },
+        {
+          id: 5,
+          src: require('@/assets/cover5.jpg'),
+        },
+        {
+          id: 6,
+          src: require('@/assets/cover6.jpg'),
+        },
+        {
+          id: 7,
+          src: require('@/assets/cover7.jpg'),
+        },
+        {
+          id: 8,
+          src: require('@/assets/cover8.jpg'),
+        },
+        {
+          id: 9,
+          src: require('@/assets/cover9.jpg'),
+        },
+        {
+          id: 10,
+          src: require('@/assets/cover10.jpg'),
+        },
+        {
+          id: 11,
+          src: require('@/assets/cover11.jpg'),
+        },
+        {
+          id: 12,
+          src: require('@/assets/cover12.jpg'),
+        },
+
+      ],
+      initialSelected: [],
+      coverPicker: false,
+      selectedCover: null
     }
   },
   computed: {
@@ -556,6 +682,11 @@ export default {
       else {
         return this.outlineStarIcon
       }
+    },
+
+    onSelectCover (data) {
+      console.log(data.id)
+      this.selectedCover = data
     },
 
     completeTask (todo_id) {
@@ -621,6 +752,32 @@ export default {
 
           })
     },
+
+    chooseCover () {
+      // TODO Add cover picker
+      this.$store.dispatch('setLoading', true)
+      this.coverPicker = false
+      console.log(this.selectedCover.src)
+
+      let coverSrc = this.selectedCover.src.replace('/img/', '').split('.')
+      coverSrc = coverSrc[0] + "." + coverSrc[2]
+      console.log(coverSrc)
+
+      const coverResult = this.covers.filter(cover => {
+        if ()
+      })
+
+
+      this.$store.dispatch('setCover', {
+        cover: coverSrc,
+        todoListId: this.todoList.id
+      })
+
+      this.$store.dispatch('setLoading', false)
+    },
+
+
+
     addToFavorite (todo_id) {
       const url = 'http://127.0.0.1:8000/api/todo/todo/' + todo_id + '/'
       const config = {

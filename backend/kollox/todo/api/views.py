@@ -119,6 +119,16 @@ class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectDetailSerializer
     lookup_url_kwarg = 'id'
     queryset = Project.objects.all()
+
+    # def patch(self, request, id):
+    #     image_src = request.data['cover']
+    #     cover = open('d:/repos/kollox/frontend/src/assets/' + image_src)
+    #     project = Project.objects.get(id=id)
+    #     project.cover = cover
+    #     project.save()
+    #     serializer = self.serializer_class(project)
+    #     if serializer.is_valid():
+    #         return Response(serializer.data, status=status.HTTP_200_OK)
     # permission_classes = (IsAuthenticated,)
     # serializer_class = ProjectDetailSerializer
     #
@@ -128,6 +138,7 @@ class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     #
     #     return Response(serializer.data,
     #                     status=status.HTTP_200_OK)
+
 
 
 class ToDoItemListView(generics.ListCreateAPIView):

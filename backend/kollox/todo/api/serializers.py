@@ -45,8 +45,15 @@ class ToDoItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ToDoItem
-        fields = ('id', 'title', 'is_completed', 'is_favorite', 'is_important', 'todo_list_id', 'todo_list_type',
-                  'started_time', 'expired_time')
+        fields = ('id',
+                  'title',
+                  'is_completed',
+                  'is_favorite',
+                  'is_important',
+                  'todo_list_id',
+                  'todo_list_type',
+                  'started_time',
+                  'expired_time')
 
 
 class ToDoItemDetailSerializer(serializers.ModelSerializer):
@@ -63,7 +70,9 @@ class SimpleToDoListListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SimpleToDoList
-        fields = ['id', 'name', 'owner']
+        fields = ['id',
+                  'name',
+                  'owner']
 
 
 class ProjectListSerializer(serializers.ModelSerializer):
@@ -71,7 +80,10 @@ class ProjectListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ['id', 'name', 'percentage_completed', 'owner']
+        fields = ['id',
+                  'name',
+                  'percentage_completed',
+                  'owner']
 
     # def create(self, validated_data):
     #     project = Project.objects.create(owner=self.context['request'].user, **validated_data)

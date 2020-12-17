@@ -49,6 +49,20 @@ export default {
             commit('setLoading', true)
         },
 
+        async setCover({commit, getters}, payload) {
+            await axios.patch('http://localhost:8000/api/todo/project/' + payload.todoListId + '/',
+                {
+                    cover: payload.cover
+                },
+                {
+                    headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+                })
+                .then(response => {
+                    console.log("Success")
+                })
+
+        },
+
         async loadProject ({commit, getters}, payload) {
             const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
             const config = {
