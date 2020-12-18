@@ -11,7 +11,7 @@
         >
           <v-img
               class="header__image"
-              src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+              src="https://images.unsplash.com/photo-1587479785927-7fd6aeb4877f?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
               height="200px"
           ></v-img>
           <div class="card__header1">

@@ -139,6 +139,7 @@
 
       </router-view>
       <v-snackbar
+          dark
           class="error__bar"
           v-if="error"
           timeout="3000"
@@ -147,6 +148,7 @@
         {{ error }}
 
           <v-btn
+              dark
               class="err_btn"
               color="deep-purple"
               @click="closeError"

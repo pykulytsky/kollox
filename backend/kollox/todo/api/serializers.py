@@ -21,7 +21,7 @@ class BaseToDoListSerializer(serializers.Serializer):
     owner = UserSerializer(read_only=True, many=False)
     favorite = serializers.BooleanField(default=False)
     status = serializers.CharField(default="Not specified")
-
+    cover = serializers.ImageField()
     percentage = serializers.DecimalField(max_digits=5, decimal_places=2, required=False)
 
 class BaseToDoListDetailSerializer(serializers.ModelSerializer):
@@ -29,7 +29,7 @@ class BaseToDoListDetailSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True, many=False)
     favorite = serializers.BooleanField(default=False)
     status = serializers.CharField(default="Not specified")
-
+    cover = serializers.ImageField()
     percentage = serializers.DecimalField(max_digits=5, decimal_places=2, required=False)
 
     created = serializers.DateTimeField()
@@ -107,7 +107,13 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ('id', 'name', 'owner', 'percentage_completed', 'cover_pick', 'cover', 'tasks')
+        fields = ('id',
+                  'name',
+                  'owner',
+                  'percentage_completed',
+                  'cover_pick',
+                  'cover',
+                  'tasks')
 
     def save(self, **kwargs):
         img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")

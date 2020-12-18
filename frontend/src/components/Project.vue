@@ -48,6 +48,13 @@
                   <v-list-item-title>
                     Add cover</v-list-item-title>
                 </v-list-item>
+
+                <v-list-item
+                    @click="deleteDialog = true"
+                >
+                  <v-list-item-title>
+                    Delete</v-list-item-title>
+                </v-list-item>
               </v-list>
             </v-menu>
 
@@ -442,6 +449,8 @@
 
 
 
+
+
     <v-dialog
         v-model="dialog"
         persistent
@@ -543,6 +552,40 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+
+
+<!--    delete list dialog-->
+    <v-dialog
+        v-model="deleteDialog"
+        persistent
+        max-width="320px"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          Delete this todo list?
+        </v-card-title>
+        <v-card-text>Are you sure you want to delete this list?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+              color="green darken-1"
+              text
+              @click="deleteDialog = false"
+          >
+            Go back
+          </v-btn>
+          <v-btn
+              color="red"
+              text
+              @click="deleteToDo"
+          >
+            Delete
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-container>
 
 </template>
@@ -567,6 +610,8 @@ export default {
       menu: false,
       todayDate: new Date().toISOString().substr(0, 10),
       dateRequired: false,
+
+      deleteDialog: false,
 
       todoList: {
         id: 0,
@@ -685,6 +730,24 @@ export default {
       }
     },
 
+    deleteToDo () {
+      this.$store.dispatch('setLoading', true)
+
+      const config = {
+        headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+      };
+
+      axios.delete('http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/',
+          config
+      )
+      .then(response => {
+        this.todoList = null
+        this.$router.push('/all-todo-lists')
+      })
+
+      this.$store.dispatch('setLoading', false)
+    },
+
     onSelectCover (data) {
       console.log(data.id)
       this.selectedCover = data
@@ -774,6 +837,29 @@ export default {
         cover: coverSrc,
         todoListId: this.todoList.id,
         coverId: this.selectedCover.id
+      })
+      .then(() => {
+        const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
+        const config = {
+          headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+        };
+
+        axios.get(url, config)
+            .then( response => {
+              this.todoList.id = response.data.id
+              this.todoList.name = response.data.name
+              this.todoList.owner = response.data.owner
+              this.todoList.favorite = response.data.favorite
+              this.todoList.tasks = response.data.tasks
+              this.todoList.cover = response.data.cover
+              this.todoList.percentageCompleted = response.data.percentage_completed
+              this.todoList.percentageCompleted *= 100
+              console.log("%: ", this.percentageCompleted)
+              console.log("response %: ", response.data.percentage_completed)
+            })
+            .catch(error => {
+              this.$store.dispatch('setError', error.message)
+            })
       })
 
       this.$store.dispatch('setLoading', false)
