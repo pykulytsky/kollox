@@ -95,9 +95,28 @@ class SimpleToDoListDetailSerializer(serializers.ModelSerializer):
     tasks = ToDoItemDetailSerializer(many=True)
     owner = UserSerializer(read_only=True)
 
+    cover_pick = serializers.IntegerField(required=False)
+
     class Meta:
         model = SimpleToDoList
-        fields = '__all__'
+        fields = ('id',
+                  'name',
+                  'owner',
+                  'cover_pick',
+                  'cover',
+                  'tasks')
+        
+    def save(self, **kwargs):
+        img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
+        cover = img.filename
+        super().save(**kwargs)
+
+    def update(self, instance, validated_data):
+        img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
+        instance.cover = img.filename
+        instance.save()
+        return instance
+
 
 
 class ProjectDetailSerializer(serializers.ModelSerializer):

@@ -18,8 +18,8 @@
             <h2 class="card__header__text">{{ todoList.name }}</h2>
             <v-progress-circular
                 :rotate="360"
-                :size="100"
-                :width="15"
+                :size="70"
+                :width="10"
                 :value="percent"
                 color="deep-purple accent-4"
             >
@@ -845,7 +845,8 @@ export default {
       this.$store.dispatch('setCover', {
         cover: coverSrc,
         todoListId: this.todoList.id,
-        coverId: this.selectedCover.id
+        coverId: this.selectedCover.id,
+        todoType: this.todoType
       })
       .then(() => {
         const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
@@ -1155,7 +1156,7 @@ p {
   margin: 25px 15px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
 }
 
 .header__image {

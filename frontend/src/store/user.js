@@ -39,7 +39,7 @@ export default {
             state.user = payload
         },
         async clearUser(state) {
-            state.auth = null
+            state.user = null
             await localStorage.clear()
         }
     },

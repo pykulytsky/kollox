@@ -11,18 +11,127 @@
         >
           <v-img
               class="header__image"
-              src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+              :src="todoList.cover"
               height="200px"
           ></v-img>
+
+
           <div class="card__header1">
             <h2 class="card__header__text">{{ todoList.name }}</h2>
+
+
+            <v-menu
+                left
+                bottom
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+
+              <v-list>
+                <v-list-item
+                    @click="coverPicker = true"
+                >
+                  <v-list-item-title>
+                    Add cover</v-list-item-title>
+                </v-list-item>
+
+                <v-list-item
+                    @click="deleteDialog = true"
+                >
+                  <v-list-item-title>
+                    Delete</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+
+          </div>
+
+
+          <!-- NEW TODO-->
+          <div class="new__todo">
+            <v-text-field
+                v-model="newTodo"
+                class="add__todo"
+                label="Add new todo"
+            >
+            </v-text-field>
+            <!--            <v-btn-->
+            <!--                v-if="!datePicker"-->
+            <!--              icon-->
+            <!--              >-->
+            <!--              <v-icon>-->
+            <!--                mdi-calendar-->
+            <!--              </v-icon>-->
+            <!--            </v-btn>-->
+
+            <v-menu
+                ref="menu"
+                v-model="menu"
+                :close-on-content-click="false"
+                :return-value.sync="date"
+                transition="scale-transition"
+                offset-y
+                min-width="290px"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    v-if="!datePicker"
+                    icon
+                >
+                  <v-icon
+                  >
+                    mdi-calendar
+                  </v-icon>
+                </v-btn>
+              </template>
+              <v-date-picker
+                  v-model="date"
+                  no-title
+                  color="deep-purple"
+                  scrollable
+                  :min="todayDate"
+              >
+                <v-spacer></v-spacer>
+                <v-btn
+                    text
+                    color="primary"
+                    @click="menu = false"
+                >
+                  Cancel
+                </v-btn>
+                <v-btn
+                    text
+                    color="primary"
+                    @click="saveDate(date)"
+                >
+                  OK
+                </v-btn>
+              </v-date-picker>
+            </v-menu>
+
+            <!--
+            -->
+
             <v-btn
                 icon
-                v-on="on"
+                @click="addTodo"
+                @keyup.enter="addTodo"
             >
-              <v-icon>mdi-dots-vertical</v-icon>
+              <v-icon>
+                mdi-plus
+              </v-icon>
             </v-btn>
           </div>
+
           <div
               class="todo__item"
               v-if="todoList.tasks"
@@ -357,6 +466,82 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+
+    <v-dialog
+        v-model="coverPicker"
+        persistent
+        max-width="900px"
+    >
+
+      <v-card>
+        <v-card-title>
+          <span class="headline">Choose cover of todo list</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <vue-select-image
+                :dataImages="covers"
+                :is-multiple="false"
+                @onselectimage="onSelectCover"
+                :h="'250px'"
+                :w="'300px'"
+            >
+
+            </vue-select-image>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+              color="blue darken-1"
+              text
+              @click="coverPicker = false"
+          >
+            Close
+          </v-btn>
+          <v-btn
+              color="blue darken-1"
+              text
+              @click="chooseCover"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
+    <v-dialog
+        v-model="deleteDialog"
+        persistent
+        max-width="320px"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          Delete this todo list?
+        </v-card-title>
+        <v-card-text>Are you sure you want to delete this list?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+              color="green darken-1"
+              text
+              @click="deleteDialog = false"
+          >
+            Go back
+          </v-btn>
+          <v-btn
+              color="red"
+              text
+              @click="deleteToDo"
+          >
+            Delete
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-container>
 
 </template>
@@ -376,13 +561,83 @@ export default {
       heartIcon: 'mdi-heart',
       heartOutlinedIcon: 'mdi-heart-outline',
 
+      datePicker: false,
+      isDateUsing: false,
+      date: new Date().toISOString().substr(0, 10),
+      menu: false,
+      todayDate: new Date().toISOString().substr(0, 10),
+      dateRequired: false,
+
+      newTodo: '',
+      todoType: 9,
+
+      deleteDialog: false,
+
       todoList: {
         id: 0,
         tasks: [],
         name: '',
         favorite: false,
-        owner: null
-      }
+        owner: null,
+        cover: '',
+      },
+
+      initialSelected: [],
+      coverPicker: false,
+      selectedCover: null,
+
+      covers: [
+        {
+          id: 1,
+          src: require('@/assets/cover1.jpg'),
+        },
+        {
+          id: 2,
+          src: require('@/assets/cover2.jpg'),
+        },
+        {
+          id: 3,
+          src: require('@/assets/cover3.jpg'),
+        },
+        {
+          id: 4,
+          src: require('@/assets/cover4.jpg'),
+        },
+        {
+          id: 5,
+          src: require('@/assets/cover5.jpg'),
+        },
+        {
+          id: 6,
+          src: require('@/assets/cover6.jpg'),
+        },
+        {
+          id: 7,
+          src: require('@/assets/cover7.jpg'),
+        },
+        {
+          id: 8,
+          src: require('@/assets/cover8.jpg'),
+        },
+        {
+          id: 9,
+          src: require('@/assets/cover9.jpg'),
+        },
+        {
+          id: 10,
+          src: require('@/assets/cover10.jpg'),
+        },
+        {
+          id: 11,
+          src: require('@/assets/cover11.jpg'),
+        },
+        {
+          id: 12,
+          src: require('@/assets/cover12.jpg'),
+        },
+
+      ],
+
     }
   },
   computed: {
@@ -410,6 +665,212 @@ export default {
 
   },
   methods: {
+    deleteToDo () {
+      this.$store.dispatch('setLoading', true)
+
+      const config = {
+        headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+      };
+
+      axios.delete('http://localhost:8000/api/todo/simple-todo-list/' + this.$route.params['id'] +
+          '/',
+          config
+      )
+          .then(response => {
+            this.todoList = null
+            this.$router.push('/all-todo-lists')
+          })
+
+      this.$store.dispatch('setLoading', false)
+    },
+
+    chooseCover () {
+      // TODO Add cover picker
+      this.$store.dispatch('setLoading', true)
+      this.coverPicker = false
+      console.log(this.selectedCover.src)
+
+      let coverSrc = this.selectedCover.src.replace('/img/', '').split('.')
+      coverSrc = coverSrc[0] + "." + coverSrc[2]
+      console.log(coverSrc)
+
+      // const coverResult = this.covers.filter(cover => {
+      //   if ()
+      // })
+
+
+      this.$store.dispatch('setCover', {
+        cover: coverSrc,
+        todoListId: this.todoList.id,
+        coverId: this.selectedCover.id,
+        todoType: this.todoType
+      })
+          .then(() => {
+            const url = 'http://localhost:8000/api/todo/simple-todo-list/' +
+                this.$route.params['id'] + '/'
+            const config = {
+              headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+            };
+
+            axios.get(url, config)
+                .then( response => {
+                  this.todoList.id = response.data.id
+                  this.todoList.name = response.data.name
+                  this.todoList.owner = response.data.owner
+                  this.todoList.favorite = response.data.favorite
+                  this.todoList.tasks = response.data.tasks
+                  this.todoList.cover = response.data.cover
+                })
+                .catch(error => {
+                  this.$store.dispatch('setError', error.message)
+                })
+          })
+
+      this.$store.dispatch('setLoading', false)
+    },
+
+    saveDate (date) {
+      this.isDateUsing = true
+      this.$refs.menu.save(date)
+    },
+
+    addTodo () {
+      const url = 'http://127.0.0.1:8000/api/todo/todos/'
+      const config = {
+        headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+      };
+      if (this.isDateUsing) {
+        const date = this.date.toString() + "T00:00"
+
+        axios.post(url, {
+          title: this.newTodo,
+          todo_list_id: this.$route.params['id'],
+          todo_list_type: this.todoType,
+          expired_time: date
+        }, {
+          headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
+        })
+            .then(response => {
+              this.date = new Date().toISOString().substr(0, 10),
+                  this.newTodo = ''
+              console.log(response.data)
+              const url = 'http://localhost:8000/api/todo/simple-todo-list/' +
+                  this.$route.params['id'] + '/'
+              const config = {
+                headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
+              };
+
+              axios.get(url, config)
+                  .then(response => {
+                    this.todoList.id = response.data.id
+                    this.todoList.name = response.data.name
+                    this.todoList.owner = response.data.owner
+                    this.todoList.favorite = response.data.favorite
+                    this.todoList.tasks = response.data.tasks
+                    this.todoList.cover = response.data.cover
+
+                  })
+                  .catch(error => {
+                    this.$store.dispatch('setError', error.message)
+                  })
+
+            })
+            .catch(error => {
+              console.log(error)
+
+            })
+
+        const reloadUrl = 'http://localhost:8000/api/todo/simple-todo-list/' +
+            this.$route.params['id'] + '/'
+        const reloadConfig = {
+          headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
+        };
+
+        axios.get(reloadUrl, reloadConfig)
+            .then(response => {
+              this.todoList.id = response.data.id
+              this.todoList.name = response.data.name
+              this.todoList.owner = response.data.owner
+              this.todoList.favorite = response.data.favorite
+              this.todoList.tasks = response.data.tasks
+              this.todoList.cover = response.data.cover
+
+
+            })
+            .catch(error => {
+              this.$store.dispatch('setError', error.message)
+            })
+      }
+      else {
+
+        axios.post(url, {
+          title: this.newTodo,
+          todo_list_id: this.$route.params['id'],
+          todo_list_type: this.todoType,
+        }, {
+          headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
+        })
+            .then(response => {
+              this.date = new Date().toISOString().substr(0, 10),
+                  this.newTodo = ''
+              console.log(response.data)
+              const url = 'http://localhost:8000/api/todo/simple-todo-list/' +
+                  this.$route.params['id'] + '/'
+              const config = {
+                headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
+              };
+
+              axios.get(url, config)
+                  .then(response => {
+                    this.todoList.id = response.data.id
+                    this.todoList.name = response.data.name
+                    this.todoList.owner = response.data.owner
+                    this.todoList.favorite = response.data.favorite
+                    this.todoList.tasks = response.data.tasks
+                    this.todoList.cover = response.data.cover
+
+                  })
+                  .catch(error => {
+                    this.$store.dispatch('setError', error.message)
+                  })
+
+            })
+            .catch(error => {
+              console.log(error)
+
+            })
+
+        const reloadUrl = 'http://localhost:8000/api/todo/simple-todo-list/' +
+            this.$route.params['id'] + '/'
+        const reloadConfig = {
+          headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
+        };
+
+        axios.get(reloadUrl, reloadConfig)
+            .then(response => {
+              this.todoList.id = response.data.id
+              this.todoList.name = response.data.name
+              this.todoList.owner = response.data.owner
+              this.todoList.favorite = response.data.favorite
+              this.todoList.tasks = response.data.tasks
+              this.todoList.cover = response.data.cover
+
+            })
+            .catch(error => {
+              this.$store.dispatch('setError', error.message)
+            })
+
+      }
+
+      this.isDateUsing = false
+
+    },
+
+    onSelectCover (data) {
+      console.log(data.id)
+      this.selectedCover = data
+    },
+
     addToFavorite () {
       this.favorite = !this.favorite
     },
@@ -431,7 +892,7 @@ export default {
       this.todoList.owner = response.data.owner
       this.todoList.favorite = response.data.favorite
       this.todoList.tasks = response.data.tasks
-
+      this.todoList.cover = response.data.cover
     })
     .catch(error => {
       this.$store.dispatch('setError', error.message)

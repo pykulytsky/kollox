@@ -50,6 +50,7 @@ export default {
         },
 
         async setCover({commit, getters}, payload) {
+            if (payload.todoType == 10) {
             await axios.patch('http://localhost:8000/api/todo/project/' + payload.todoListId + '/',
                 {
                     cover_pick: payload.coverId
@@ -58,8 +59,25 @@ export default {
                     headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
                 })
                 .then(response => {
-                    console.log("Success")
+                    console.log("Success project")
                 })
+            }
+            else if (payload.todoType == 9) {
+                await axios.patch('http://localhost:8000/api/todo/simple-todo-list/' + payload.todoListId + '/',
+                    {
+                        cover_pick: payload.coverId
+                    },
+                    {
+                        headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+                    })
+                    .then(response => {
+                        console.log("Success todolist")
+                    })
+
+            }
+            else {
+                commit('setError', 'Wrong todo list type')
+            }
 
         },
 
