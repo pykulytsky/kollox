@@ -5,7 +5,7 @@
   >
   <div
       v-for="list in todoLists"
-      :v-key = "n"
+      :v-key = "list.id"
       class="col-md-4">
     <v-card
         link
@@ -90,14 +90,15 @@
             <v-radio-group
                 v-model="todoListType"
                 row
+                @change="checkType"
             >
               <v-radio
                   label="Simple Todo list"
-                  value="simpleList"
+                  value="0"
               ></v-radio>
               <v-radio
                   label="Project"
-                  value="project"
+                  value="1"
               ></v-radio>
             </v-radio-group>
 <!--            <v-col-->
@@ -172,7 +173,7 @@ export  default {
   data: () => {
     return {
       dialog: false,
-      todoListType: 'simpleList',
+      todoListType: 0,
       newToDoListName: ''
     }
   },
@@ -197,12 +198,16 @@ export  default {
   },
 
   methods: {
+    checkType () {
+      console.log("Type: ", this.todoListType)
+    },
+
     openDialog() {
       this.dialog = true
     },
 
     onCreateSubmit () {
-      if (this.todoListType == 'simpleList') {
+      if (this.todoListType == 0) {
 
         axios.post('http://localhost:8000/api/todo/simple-todo-lists/', {'name':
           this.newToDoListName}, {
@@ -211,7 +216,7 @@ export  default {
         }})
 
       }
-      else if (this.todoListType == 'project') {
+      else if (this.todoListType == 1) {
         axios.post('http://localhost:8000/api/todo/projects/', {'name': this.newToDoListName},
             {headers: {
               Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`

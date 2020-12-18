@@ -46,7 +46,7 @@ class SimpleToDoListListAPIView(generics.ListCreateAPIView):
         return queryset
 
     def list(self, request):
-        queryset = Project.objects.filter(owner=request.user)
+        queryset = SimpleToDoList.objects.filter(owner=request.user)
         serializer = self.serializer_class(self.get_queryset(request), many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -191,25 +191,25 @@ class FavoriteToDoItemListView(generics.ListAPIView):
                     todo_list_type=request.data['list_type'],
                     project__owner=_user,
                     is_favorite=True
-                ).order_by('id')
+                )
             else:
                 queryset = ToDoItem.objects.filter(
                     todo_list_id=request.data['list_id'],
                     todo_list_type=request.data['list_type'],
                     simple_todo_list__owner=_user,
                     is_favorite=True
-                ).order_by('id')
+                )
         else:
             try:
                 queryset = ToDoItem.objects.filter(
                     is_favorite=True,
                     project__owner=_user
-                ).order_by('id')
+                )
             except:
                 queryset = ToDoItem.objects.filter(
                     is_favorite=True,
                     simple_todo_list__owner=_user
-                ).order_by('id')
+                )
         return queryset
 
     def list(self, request, *args, **kwargs):

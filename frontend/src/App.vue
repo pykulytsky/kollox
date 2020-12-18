@@ -47,6 +47,7 @@
       <v-divider></v-divider>
       <v-list>
         <v-list-item
+            @click="drawer = false"
             v-for="item in links"
             :key="item.name"
             link
@@ -66,6 +67,7 @@
     </v-navigation-drawer>
 
     <v-app-bar
+        :loading="loading"
         app
         color="deep-purple accent-4"
         dense
@@ -124,6 +126,7 @@
               v-for="link in links"
               :key="link.name"
               @click="() => {}"
+              :to="link.url"
           >
             <v-list-item-title>
               <v-icon left>{{ link.icon }}</v-icon>
@@ -281,6 +284,9 @@ export default {
 
     currentRoute () {
       return this.$route
+    },
+    loading () {
+      return this.$store.getters.loading
     }
   },
   methods: {

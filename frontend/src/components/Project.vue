@@ -118,7 +118,7 @@
                 <v-btn
                     text
                     color="primary"
-                    @click="$refs.menu.save(date)"
+                    @click="saveDate(date)"
                 >
                   OK
                 </v-btn>
@@ -605,6 +605,7 @@ export default {
       heartIcon: 'mdi-heart',
       heartOutlinedIcon: 'mdi-heart-outline',
       datePicker: false,
+      isDateUsing: false,
 
       date: new Date().toISOString().substr(0, 10),
       menu: false,
@@ -705,16 +706,19 @@ export default {
       //     totalCompletedTasks ++
       //   }
       // }
-      this.todoList.tasks.forEach(task => {
-        if (task.is_completed) {
-             totalCompletedTasks ++
-        }
-      })
 
-
-      let percentCompleted = Math.round((totalCompletedTasks / totalTodoCount) * 100)
-      return percentCompleted
-
+      if (this.todoList.tasks.length == 0) {
+       return 0
+      }
+      else {
+        this.todoList.tasks.forEach(task => {
+          if (task.is_completed) {
+            totalCompletedTasks++
+          }
+        })
+        let percentCompleted = Math.round((totalCompletedTasks / totalTodoCount) * 100)
+        return percentCompleted
+      }
     }
 
   },
@@ -818,6 +822,11 @@ export default {
           })
     },
 
+    saveDate (date) {
+      this.isDateUsing = true
+      this.$refs.menu.save(date)
+    },
+
     chooseCover () {
       // TODO Add cover picker
       this.$store.dispatch('setLoading', true)
@@ -916,28 +925,116 @@ export default {
       const config = {
         headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
       };
+      if (this.isDateUsing) {
+        const date = this.date.toString() + "T00:00"
 
-      const date = this.date.toString() + "T00:00"
+        axios.post(url, {
+          title: this.newTodo,
+          todo_list_id: this.$route.params['id'],
+          todo_list_type: this.todoType,
+          expired_time: date
+        }, {
+          headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
+        })
+            .then(response => {
+              this.date = new Date().toISOString().substr(0, 10),
+                  this.newTodo = ''
+              console.log(response.data)
+              const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
+              const config = {
+                headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
+              };
 
-      axios.post(url, {
-        title: this.newTodo,
-        todo_list_id: this.$route.params['id'],
-        todo_list_type: this.todoType,
-        expired_time: date
-      }, {
-        headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
-      })
-      .then(response => {
-        this.date = new Date().toISOString().substr(0, 10),
-        this.newTodo = ''
-        console.log(response.data)
-        const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
-        const config = {
-          headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+              axios.get(url, config)
+                  .then(response => {
+                    this.todoList.id = response.data.id
+                    this.todoList.name = response.data.name
+                    this.todoList.owner = response.data.owner
+                    this.todoList.favorite = response.data.favorite
+                    this.todoList.tasks = response.data.tasks
+                    this.todoList.cover = response.data.cover
+                    this.todoList.percentageCompleted = response.data.percentage_completed
+                    this.todoList.percentageCompleted *= 100
+
+                  })
+                  .catch(error => {
+                    this.$store.dispatch('setError', error.message)
+                  })
+
+            })
+            .catch(error => {
+              console.log(error)
+
+            })
+
+        const reloadUrl = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
+        const reloadConfig = {
+          headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
         };
 
-        axios.get(url, config)
-            .then( response => {
+        axios.get(reloadUrl, reloadConfig)
+            .then(response => {
+              this.todoList.id = response.data.id
+              this.todoList.name = response.data.name
+              this.todoList.owner = response.data.owner
+              this.todoList.favorite = response.data.favorite
+              this.todoList.tasks = response.data.tasks
+              this.todoList.cover = response.data.cover
+              this.todoList.percentageCompleted = response.data.percentage_completed
+              this.todoList.percentageCompleted *= 100
+
+            })
+            .catch(error => {
+              this.$store.dispatch('setError', error.message)
+            })
+      }
+      else {
+
+        axios.post(url, {
+          title: this.newTodo,
+          todo_list_id: this.$route.params['id'],
+          todo_list_type: this.todoType,
+        }, {
+          headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
+        })
+            .then(response => {
+              this.date = new Date().toISOString().substr(0, 10),
+                  this.newTodo = ''
+              console.log(response.data)
+              const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
+              const config = {
+                headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
+              };
+
+              axios.get(url, config)
+                  .then(response => {
+                    this.todoList.id = response.data.id
+                    this.todoList.name = response.data.name
+                    this.todoList.owner = response.data.owner
+                    this.todoList.favorite = response.data.favorite
+                    this.todoList.tasks = response.data.tasks
+                    this.todoList.cover = response.data.cover
+                    this.todoList.percentageCompleted = response.data.percentage_completed
+                    this.todoList.percentageCompleted *= 100
+
+                  })
+                  .catch(error => {
+                    this.$store.dispatch('setError', error.message)
+                  })
+
+            })
+            .catch(error => {
+              console.log(error)
+
+            })
+
+        const reloadUrl = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
+        const reloadConfig = {
+          headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
+        };
+
+        axios.get(reloadUrl, reloadConfig)
+            .then(response => {
               this.todoList.id = response.data.id
               this.todoList.name = response.data.name
               this.todoList.owner = response.data.owner
@@ -952,32 +1049,10 @@ export default {
               this.$store.dispatch('setError', error.message)
             })
 
-      })
-      .catch(error => {
-        console.log(error)
+      }
 
-      })
+      this.isDateUsing = false
 
-      const reloadUrl = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
-      const reloadConfig = {
-        headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
-      };
-
-      axios.get(reloadUrl, reloadConfig)
-          .then( response => {
-            this.todoList.id = response.data.id
-            this.todoList.name = response.data.name
-            this.todoList.owner = response.data.owner
-            this.todoList.favorite = response.data.favorite
-            this.todoList.tasks = response.data.tasks
-            this.todoList.cover = response.data.cover
-            this.todoList.percentageCompleted = response.data.percentage_completed
-            this.todoList.percentageCompleted *= 100
-
-          })
-          .catch(error => {
-            this.$store.dispatch('setError', error.message)
-          })
     }
   },
   updated() {
