@@ -62,11 +62,7 @@ class UserAPIView(APIView):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, ])
 def verify_email(request, verification_code):
-    # logger.warning(f"{request.META['HTTP_AUTHORIZATION']=}")
-    if 'Bearer' in request.META['HTTP_AUTHORIZATION']:
-         pass
-    else:
-        request.META['HTTP_AUTHORIZATION'] = 'Bearer ' + request.session['token']
+
     if not request.user.is_authenticated:
         return Response({
             'status': 'Authenticate first to verify email.'
@@ -82,6 +78,9 @@ def verify_email(request, verification_code):
 
         if user.email_verification_code == verification_code:
             user.email_verified = True
+
+
+
             return Response({
                 'status': 'OK'
             },

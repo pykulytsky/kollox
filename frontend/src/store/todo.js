@@ -52,7 +52,7 @@ export default {
         async setCover({commit, getters}, payload) {
             await axios.patch('http://localhost:8000/api/todo/project/' + payload.todoListId + '/',
                 {
-                    cover: payload.cover
+                    cover_pick: payload.coverId
                 },
                 {
                     headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }

@@ -4,6 +4,7 @@ from todo.models import ToDoItem, SimpleToDoList, Project, Reminder
 from authentication.models import User
 from authentication.api.serializers import UserSerializer, UserDetailSerializer
 
+from PIL import Image
 
 class TodoRelatedField(serializers.RelatedField):
     def to_representation(self, value):
@@ -102,7 +103,19 @@ class SimpleToDoListDetailSerializer(serializers.ModelSerializer):
 class ProjectDetailSerializer(serializers.ModelSerializer):
     tasks = ToDoItemDetailSerializer(many=True)
     owner = UserSerializer(read_only=True)
+    cover_pick = serializers.IntegerField(required=False)
 
     class Meta:
         model = Project
-        fields = '__all__'
+        fields = ('id', 'name', 'owner', 'percentage_completed', 'cover_pick', 'cover', 'tasks')
+
+    def save(self, **kwargs):
+        img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
+        cover = img.filename
+        super().save(**kwargs)
+
+    def update(self, instance, validated_data):
+        img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
+        instance.cover = img.filename
+        instance.save()
+        return instance

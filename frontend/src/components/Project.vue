@@ -11,7 +11,7 @@
         >
           <v-img
               class="header__image"
-              src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+              :src="todoList.cover"
               height="200px"
           ></v-img>
           <div class="card__header1">
@@ -574,6 +574,7 @@ export default {
         name: '',
         favorite: false,
         owner: null,
+        cover: '',
         percentageCompleted: 0.0
       },
       newTodo: '',
@@ -737,6 +738,7 @@ export default {
                     this.todoList.owner = response.data.owner
                     this.todoList.favorite = response.data.favorite
                     this.todoList.tasks = response.data.tasks
+                    this.todoList.cover = response.data.cover
                     this.todoList.percentageCompleted = response.data.percentage_completed
                     this.todoList.percentageCompleted *= 100
                     console.log("% after: ", this.todoList.percentageCompleted)
@@ -763,14 +765,15 @@ export default {
       coverSrc = coverSrc[0] + "." + coverSrc[2]
       console.log(coverSrc)
 
-      const coverResult = this.covers.filter(cover => {
-        if ()
-      })
+      // const coverResult = this.covers.filter(cover => {
+      //   if ()
+      // })
 
 
       this.$store.dispatch('setCover', {
         cover: coverSrc,
-        todoListId: this.todoList.id
+        todoListId: this.todoList.id,
+        coverId: this.selectedCover.id
       })
 
       this.$store.dispatch('setLoading', false)
@@ -807,6 +810,7 @@ export default {
               this.todoList.name = response.data.name
               this.todoList.owner = response.data.owner
               this.todoList.favorite = response.data.favorite
+              this.todoList.cover = response.data.cover
               this.todoList.tasks = response.data.tasks
               this.todoList.percentageCompleted = response.data.percentage_completed
               this.todoList.percentageCompleted *= 100
@@ -853,6 +857,7 @@ export default {
               this.todoList.owner = response.data.owner
               this.todoList.favorite = response.data.favorite
               this.todoList.tasks = response.data.tasks
+              this.todoList.cover = response.data.cover
               this.todoList.percentageCompleted = response.data.percentage_completed
               this.todoList.percentageCompleted *= 100
 
@@ -879,6 +884,7 @@ export default {
             this.todoList.owner = response.data.owner
             this.todoList.favorite = response.data.favorite
             this.todoList.tasks = response.data.tasks
+            this.todoList.cover = response.data.cover
             this.todoList.percentageCompleted = response.data.percentage_completed
             this.todoList.percentageCompleted *= 100
 
@@ -894,8 +900,7 @@ export default {
       headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
     };
 
-
-    console.log("Date: ", this.date)
+    console.log("Cover: ", this.todoList.cover)
     // axios.get(url, config)
     //     .then( response => {
     //       this.todoList.id = response.data.id
@@ -925,6 +930,7 @@ export default {
           this.todoList.owner = response.data.owner
           this.todoList.favorite = response.data.favorite
           this.todoList.tasks = response.data.tasks
+          this.todoList.cover = response.data.cover
           this.todoList.percentageCompleted = response.data.percentage_completed
           this.todoList.percentageCompleted *= 100
           console.log("%: ", this.percentageCompleted)
