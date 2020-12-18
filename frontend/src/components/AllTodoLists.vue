@@ -15,6 +15,7 @@
         max-width="344"
     >
       <v-img
+          v-if="list.data.cover"
           :src="list.data.cover"
           height="200px"
       ></v-img>
@@ -22,28 +23,32 @@
       <v-card-title>
         {{ list.data.name }}
       </v-card-title>
-
-      <v-card-subtitle>
-        {{ list.data.id }}
-      </v-card-subtitle>
-
       <v-card-actions>
-        <v-btn
-            color="orange lighten-2"
-            text
-        >
-          Explore
-        </v-btn>
-
         <v-spacer></v-spacer>
-
-<!--        <v-btn-->
-<!--            icon-->
-<!--            @click="show = !show"-->
-<!--        >-->
-<!--          <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>-->
-<!--        </v-btn>-->
+        <small> {{ list.data.total_completed_tasks }} of {{ list.data.total_tasks }}</small>
       </v-card-actions>
+
+<!--      <v-card-subtitle>-->
+<!--        {{ list.data.id }}-->
+<!--      </v-card-subtitle>-->
+
+  <!--      <v-card-actions>-->
+  <!--        <v-btn-->
+  <!--            color="orange lighten-2"-->
+  <!--            text-->
+  <!--        >-->
+  <!--          Explore-->
+  <!--        </v-btn>-->
+
+  <!--        <v-spacer></v-spacer>-->
+
+  <!--&lt;!&ndash;        <v-btn&ndash;&gt;-->
+  <!--&lt;!&ndash;            icon&ndash;&gt;-->
+  <!--&lt;!&ndash;            @click="show = !show"&ndash;&gt;-->
+  <!--&lt;!&ndash;        >&ndash;&gt;-->
+  <!--&lt;!&ndash;          <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>&ndash;&gt;-->
+  <!--&lt;!&ndash;        </v-btn>&ndash;&gt;-->
+  <!--      </v-card-actions>-->
 
 <!--      <v-expand-transition>-->
 <!--        <div v-show="show">-->

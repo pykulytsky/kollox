@@ -29,9 +29,11 @@ class AllToDoListAPIView(APIView):
 
         for entry in combined_queryset:
             item_type = entry.__class__.__name__.lower()
-            serializer = BaseToDoListSerializer(entry, context={"request": request})
+            serializer = BaseToDoListSerializer(entry,
+                                                context={"request": request})
 
-            resulted_query.append({'todo_list_type': item_type, 'data': serializer.data})
+            resulted_query.append({'todo_list_type': item_type,
+                                   'data': serializer.data})
 
         return Response(resulted_query,
                         status=status.HTTP_200_OK)
@@ -47,7 +49,9 @@ class SimpleToDoListListAPIView(generics.ListCreateAPIView):
 
     def list(self, request):
         queryset = SimpleToDoList.objects.filter(owner=request.user)
-        serializer = self.serializer_class(self.get_queryset(request), many=True)
+        serializer = self.serializer_class(self.get_queryset(request),
+                                           many=True,
+                                           context={"request": request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -79,7 +83,9 @@ class ProjectListAPIView(generics.ListCreateAPIView):
 
     def list(self, request):
         queryset = Project.objects.filter(owner=request.user)
-        serializer = self.serializer_class(self.get_queryset(request), many=True)
+        serializer = self.serializer_class(self.get_queryset(request),
+                                           many=True,
+                                           context={"request": request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -112,6 +118,7 @@ class SimpleToDoListDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SimpleToDoListDetailSerializer
     lookup_url_kwarg = 'id'
     queryset = SimpleToDoList.objects.all()
+    # TODO add protection for current user
 
 
 class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -172,7 +179,8 @@ class ToDoItemListView(generics.ListCreateAPIView):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        serializer = self.serializer_class(self.get_queryset(request), many=True)
+        serializer = self.serializer_class(self.get_queryset(request),
+                                           many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -213,7 +221,8 @@ class FavoriteToDoItemListView(generics.ListAPIView):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        serializer = self.serializer_class(self.get_queryset(request), many=True)
+        serializer = self.serializer_class(self.get_queryset(request),
+                                           many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

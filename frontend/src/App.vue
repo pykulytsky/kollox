@@ -77,12 +77,12 @@
       @click="drawer = !drawer"
       ></v-app-bar-nav-icon>
 
-      <v-toolbar-title class="card__header__text">Page title</v-toolbar-title>
+      <v-toolbar-title class="card__header__text">KOLLOX</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
       <v-btn
-          v-if="currentRoute.params !== {}"
+          v-if="currentRoute.params"
           @click="isListFavorite = !isListFavorite"
           icon>
         <v-icon>{{heart}}</v-icon>

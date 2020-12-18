@@ -129,6 +129,14 @@ class SimpleToDoList(BaseToDoList):
                             related_query_name="simple_todo_list")
     status = models.CharField(choices=TODO_LIST_STATUS, max_length=255, default='not_started', verbose_name="Status")
 
+    @property
+    def total_tasks(self):
+        return len(self.tasks.all())
+
+    @property
+    def total_completed_tasks(self):
+        return len(self.tasks.filter(is_completed=True))
+
     def save(self, *args, **kwargs):
         if self.status not in [s[0] for s in TODO_LIST_STATUS]:
             raise ValueError(f"Not Valid status. Can be {TODO_LIST_STATUS} not {self.status}.")
@@ -158,6 +166,14 @@ class Project(BaseToDoList):
     percentage_completed = models.DecimalField(verbose_name="Completed Status", default=0,
                                                validators=[percent_validation], max_digits=5, decimal_places=2)
     status = models.CharField(choices=PROJECT_STATUS, verbose_name="Status", max_length=256, default='not_started')
+
+    @property
+    def total_tasks(self):
+        return len(self.tasks.all())
+
+    @property
+    def total_completed_tasks(self):
+        return len(self.tasks.filter(is_completed=True))
 
     def calculate_percent(self):
         all_tasks = self.tasks.all()

@@ -81,6 +81,29 @@ export default {
 
         },
 
+        async loadProjects({commit, getters}, payload) {
+            commit('setLoading', true)
+
+            commit('clearError')
+
+            const config = {
+                headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+            };
+            const url = 'http://localhost:8000/api/todo/projects/'
+
+            await axios.get(url, config)
+                .then(response => {
+                    console.log("Success loading todos: ", response.data)
+                    commit('setProjects', response.data)
+                })
+                .catch(error => {
+                    commit('setError', error.message)
+                })
+
+            commit('setLoading', false)
+
+        },
+
         async loadProject ({commit, getters}, payload) {
             const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
             const config = {
@@ -177,6 +200,9 @@ export default {
     getters: {
         allLists (state) {
             return state.allLists
+        },
+        projects (state) {
+            return state.projects
         }
     }
 }

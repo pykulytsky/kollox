@@ -23,6 +23,8 @@ class BaseToDoListSerializer(serializers.Serializer):
     status = serializers.CharField(default="Not specified")
     cover = serializers.ImageField()
     percentage = serializers.DecimalField(max_digits=5, decimal_places=2, required=False)
+    total_tasks = serializers.IntegerField()
+    total_completed_tasks = serializers.IntegerField()
 
 class BaseToDoListDetailSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True)
@@ -34,6 +36,9 @@ class BaseToDoListDetailSerializer(serializers.ModelSerializer):
 
     created = serializers.DateTimeField()
     updated = serializers.DateTimeField()
+
+    total_tasks = serializers.IntegerField()
+    total_completed_tasks = serializers.IntegerField()
 
 
 class ReminderSerializer(serializers.ModelSerializer):
@@ -73,7 +78,9 @@ class SimpleToDoListListSerializer(serializers.ModelSerializer):
         model = SimpleToDoList
         fields = ['id',
                   'name',
-                  'owner']
+                  'owner',
+                  'total_tasks',
+                  'total_completed_tasks']
 
 
 class ProjectListSerializer(serializers.ModelSerializer):
@@ -84,7 +91,10 @@ class ProjectListSerializer(serializers.ModelSerializer):
         fields = ['id',
                   'name',
                   'percentage_completed',
-                  'owner']
+                  'owner',
+                  'cover',
+                  'total_tasks',
+                  'total_completed_tasks']
 
     # def create(self, validated_data):
     #     project = Project.objects.create(owner=self.context['request'].user, **validated_data)
@@ -104,8 +114,9 @@ class SimpleToDoListDetailSerializer(serializers.ModelSerializer):
                   'owner',
                   'cover_pick',
                   'cover',
-                  'tasks')
-        
+                  'tasks',
+                  'total_tasks')
+
     def save(self, **kwargs):
         img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
         cover = img.filename
@@ -132,7 +143,8 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
                   'percentage_completed',
                   'cover_pick',
                   'cover',
-                  'tasks')
+                  'tasks',
+                  'total_tasks')
 
     def save(self, **kwargs):
         img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")

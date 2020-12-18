@@ -152,12 +152,18 @@
               <v-icon>mdi-dots-vertical</v-icon>
             </v-btn>
             <v-btn
-                @click="addToFavorite"
+                @click="addToFavorite(todo.id)"
                 icon
                 color="indigo"
 
             >
-              <v-icon>{{ star }}</v-icon>
+              <v-icon
+                  v-if="todo.is_favorite"
+              >mdi-star</v-icon>
+
+              <v-icon
+                  v-else
+              >mdi-star-outline</v-icon>
             </v-btn>
           </div>
 <!--          <div class="todo__item">-->
@@ -871,8 +877,45 @@ export default {
       this.selectedCover = data
     },
 
-    addToFavorite () {
-      this.favorite = !this.favorite
+    addToFavorite (todo_id) {
+      const url = 'http://127.0.0.1:8000/api/todo/todo/' + todo_id + '/'
+      const config = {
+        headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+      };
+      const todo = this.todoList.tasks.filter(task => {
+        return task ? task.id === todo_id: null
+      })[0]
+
+      console.log("Favorite: ",todo)
+      // TODO Update request, to update not all list, actually specific todo item
+
+      axios.patch(url, {
+        is_favorite: !todo.is_favorite
+      },{
+        headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+      })
+          .then(response => {
+            const url = 'http://localhost:8000/api/todo/simple-todo-list/' +
+                this.$route.params['id'] + '/'
+            const config = {
+              headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+            };
+
+            axios.get(url, config)
+                .then( response => {
+                  this.todoList.id = response.data.id
+                  this.todoList.name = response.data.name
+                  this.todoList.owner = response.data.owner
+                  this.todoList.favorite = response.data.favorite
+                  this.todoList.cover = response.data.cover
+                  this.todoList.tasks = response.data.tasks
+
+                })
+                .catch(error => {
+                  this.$store.dispatch('setError', error.message)
+                })
+          })
+
     },
     openDialog() {
       this.dialog = true
