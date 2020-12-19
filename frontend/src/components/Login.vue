@@ -59,6 +59,7 @@
 
 const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
 export default {
+  title: 'Login',
 
   // TODO Fix double loading on login and registration
   data: () => {

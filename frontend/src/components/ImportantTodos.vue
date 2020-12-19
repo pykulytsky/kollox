@@ -176,6 +176,7 @@
 import axios from 'axios'
 
 export default {
+  title: 'Favorite todos',
   data: () => {
     return {
       drawer: false,

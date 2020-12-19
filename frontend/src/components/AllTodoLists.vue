@@ -175,6 +175,7 @@
 import axios from 'axios'
 
 export  default {
+  title: 'All todo lists',
   data: () => {
     return {
       dialog: false,

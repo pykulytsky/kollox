@@ -14,6 +14,8 @@ import Project from "@/components/Project";
 import ImportantTodos from "@/components/ImportantTodos";
 import ErrorPage from "@/components/ErrorPage.vue";
 
+import Search from '@/components/Search'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -110,19 +112,25 @@ const routes = [
       }
     }
   },
-    {
-        path: '/important',
-        component: ImportantTodos,
-        beforeEnter(to, from, next) {
-            if (JSON.parse(localStorage.getItem('auth'))['token']) {
-                store.dispatch('loadUser')
-                next()
-            }
-            else {
-                next('/login')
-            }
-        }
-    },
+
+  {
+    path: '/important',
+    component: ImportantTodos,
+    beforeEnter(to, from, next) {
+      if (JSON.parse(localStorage.getItem('auth'))['token']) {
+        store.dispatch('loadUser')
+        next()
+      } else {
+        next('/login')
+      }
+    }
+  },
+  {
+    path: '/search',
+    component: Search,
+    name: 'search'
+  },
+
   {
     path: '*',
     component: ErrorPage,
