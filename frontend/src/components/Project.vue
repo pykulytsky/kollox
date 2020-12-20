@@ -13,19 +13,22 @@
               class="header__image"
               :src="todoList.cover"
               height="200px"
-          ></v-img>
-          <div class="card__header1">
-            <h2 class="card__header__text">{{ todoList.name }}</h2>
+
+          >
             <v-progress-circular
                 :rotate="360"
                 :size="70"
                 :width="10"
                 :value="percent"
-                color="deep-purple accent-4"
+                class="progress"
+                color="accent-4"
             >
               {{ percent }}%
             </v-progress-circular>
 
+          </v-img>
+          <div class="card__header1">
+            <h2 class="card__header__text">{{ todoList.name }}</h2>
 
             <v-menu
                 left
@@ -44,17 +47,46 @@
               <v-list>
                 <v-list-item
                   @click="coverPicker = true"
-                  >
+
+                >
+                  <v-list-item-icon>
+                    <v-icon>
+                      mdi-plus-box-multiple
+                    </v-icon>
+                  </v-list-item-icon>
                   <v-list-item-title>
                     Add cover</v-list-item-title>
+
+                </v-list-item>
+
+
+                <v-list-item
+                    @click="shareDialog = true"
+                >
+                  <v-list-item-icon>
+                    <v-icon>
+
+                      mdi-export-variant
+                    </v-icon>
+                  </v-list-item-icon>
+
+                  <v-list-item-title>
+                    Share list</v-list-item-title>
+
                 </v-list-item>
 
                 <v-list-item
                     @click="deleteDialog = true"
                 >
+                  <v-list-item-icon>
+                    <v-icon>
+                      mdi-delete-forever
+                    </v-icon>
+                  </v-list-item-icon>
                   <v-list-item-title>
                     Delete</v-list-item-title>
                 </v-list-item>
+
               </v-list>
             </v-menu>
 
@@ -144,8 +176,8 @@
               v-for="(todo, i) in todoList.tasks"
           >
             <v-checkbox
-                color="indigo"
-                class="item__checkbox"
+                color="indigo darken-3"
+                class="item__checkbox round"
                 v-model="todo.is_completed"
                 @click="completeTask(todo.id)"
                 hide-details
@@ -625,6 +657,8 @@ export default {
       },
       newTodo: '',
       todoType: 10,
+
+      shareDialog: false,
 
       covers: [
         {
@@ -1135,9 +1169,8 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: baseline;
-  padding: 3px 10px 10px 10px;
-  background-color: #121212;
 
+  background-color: #121212;
 }
 .todo__item:last-child {
   margin-bottom: 25px;
@@ -1146,6 +1179,7 @@ export default {
 .item__checkbox {
   margin: 0;
   padding: 0;
+
 }
 p {
   margin: 0;
@@ -1175,9 +1209,7 @@ p {
   margin-right: 50px;
 }
 
-.project__progress {
 
-}
 
 .progress__section {
   display: flex;
@@ -1191,4 +1223,12 @@ p {
 .completed-task {
   text-decoration: line-through;
 }
+
+.progress {
+  position: absolute;
+  right: 0;
+  margin-right: 5px;
+  margin-top: 5px;
+}
+
 </style>

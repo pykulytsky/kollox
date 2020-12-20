@@ -9,6 +9,7 @@ from authentication.permissions import UserHasJWTToken, EmailVerified, EmailNotV
 from ..models import SimpleToDoList, Project, BaseToDoList
 from ..api.serializers import *
 from authentication.models import User
+from django.db.models import Q
 
 from rest_framework import status
 from itertools import chain
@@ -21,8 +22,8 @@ class AllToDoListAPIView(APIView):
 
     def get(self, request):
         _owner = request.user
-        _simple_todo_lists = SimpleToDoList.objects.filter(owner=_owner)
-        _projects = Project.objects.filter(owner=_owner)
+        _simple_todo_lists = SimpleToDoList.objects.filter(Q(owner=_owner) | Q(shared_owners=_owner))
+        _projects = Project.objects.filter(Q(owner=_owner) | Q(shared_owners=_owner))
 
         combined_queryset = list(chain(_simple_todo_lists, _projects))
         resulted_query = list()
@@ -44,11 +45,13 @@ class SimpleToDoListListAPIView(generics.ListCreateAPIView):
     serializer_class = SimpleToDoListListSerializer
 
     def get_queryset(self, request):
-        queryset = SimpleToDoList.objects.filter(owner=request.user)
+        _owner = request.user
+        queryset = SimpleToDoList.objects.filter(Q(owner=_owner) | Q(shared_owners=_owner))
         return queryset
 
     def list(self, request):
-        queryset = SimpleToDoList.objects.filter(owner=request.user)
+        _owner = request.user
+        queryset = SimpleToDoList.objects.filter(Q(owner=_owner) | Q(shared_owners=_owner))
         serializer = self.serializer_class(self.get_queryset(request),
                                            many=True,
                                            context={"request": request})
@@ -78,11 +81,12 @@ class ProjectListAPIView(generics.ListCreateAPIView):
     serializer_class = ProjectListSerializer
 
     def get_queryset(self, request):
-        queryset = Project.objects.filter(owner=request.user)
+        _owner = request.user
+        queryset = Project.objects.filter(Q(owner=_owner) | Q(shared_owners=_owner))
         return queryset
 
     def list(self, request):
-        queryset = Project.objects.filter(owner=request.user)
+        _owner = request.user
         serializer = self.serializer_class(self.get_queryset(request),
                                            many=True,
                                            context={"request": request})
@@ -157,24 +161,24 @@ class ToDoItemListView(generics.ListCreateAPIView):
         if 'list_id' in request.data.keys() and 'list_type' in request.data.keys():
             if request.data['list_type'] == 10:
                 queryset = ToDoItem.objects.filter(
+                    Q(project__owner=_user) | Q(project__shared_owners=_user),
                     todo_list_id=request.data['list_id'],
                     todo_list_type=request.data['list_type'],
-                    project__owner=_user
                     ).order_by('id')
             else:
                 queryset = ToDoItem.objects.filter(
+                    Q(project__owner=_user) | Q(project__shared_owners=_user),
                     todo_list_id=request.data['list_id'],
                     todo_list_type=request.data['list_type'],
-                    simple_todo_list__owner=_user
                 ).order_by('id')
         else:
             try:
                 queryset = ToDoItem.objects.filter(
-                    project__owner=_user
+                    Q(project__owner=_user) | Q(project__shared_owners=_user)
                 ).order_by('id')
             except:
                 queryset = ToDoItem.objects.filter(
-                    simple_todo_list__owner=_user
+                    Q(project__owner=_user) | Q(project__shared_owners=_user)
                 ).order_by('id')
         return queryset
 

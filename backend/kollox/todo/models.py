@@ -37,11 +37,11 @@ class QuerySetChain(object):
         return sum(qs.count() for qs in self.querysets)
 
     def _clone(self):
-        "Returns a clone of this queryset chain"
+        """Returns a clone of this queryset chain"""
         return self.__class__(*self.querysets)
 
     def _all(self):
-        "Iterates records in all subquerysets"
+        """Iterates records in all subquerysets"""
         return chain(*self.querysets)
 
     def __getitem__(self, ndx):
@@ -107,6 +107,7 @@ class BaseToDoList(models.Model):
     cover = models.ImageField(upload_to="assets/avatars/",
                               default="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg")
 
+
     class Meta:
         abstract = True
 
@@ -123,6 +124,9 @@ TODO_LIST_STATUS = [
 class SimpleToDoList(BaseToDoList):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_simple_todo_lists",
                               verbose_name="ToDo-List Owner")
+    shared_owners = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="shared_lists",
+                                          verbose_name="Shared Owner")
+
     tasks = GenericRelation('ToDoItem',
                             content_type_field='todo_list_type',
                             object_id_field='todo_list_id',
@@ -159,6 +163,10 @@ PROJECT_STATUS = [
 class Project(BaseToDoList):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_projects",
                               verbose_name="ToDo-List Owner")
+    shared_owners = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="shared_projects",
+                                          verbose_name="Shared Owner")
+
+
     tasks = GenericRelation('ToDoItem',
                             content_type_field='todo_list_type',
                             object_id_field='todo_list_id',

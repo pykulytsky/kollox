@@ -145,7 +145,6 @@
           dark
           class="error__bar"
           v-if="error"
-          timeout="3000"
           :value="true"
       >
         {{ error }}

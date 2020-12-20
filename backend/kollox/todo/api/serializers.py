@@ -104,14 +104,15 @@ class ProjectListSerializer(serializers.ModelSerializer):
 class SimpleToDoListDetailSerializer(serializers.ModelSerializer):
     tasks = ToDoItemDetailSerializer(many=True)
     owner = UserSerializer(read_only=True)
-
     cover_pick = serializers.IntegerField(required=False)
+    shared_owners = UserSerializer(read_only=True, many=True)
 
     class Meta:
         model = SimpleToDoList
         fields = ('id',
                   'name',
                   'owner',
+                  'shared_owners',
                   'cover_pick',
                   'cover',
                   'tasks',
@@ -134,12 +135,14 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
     tasks = ToDoItemDetailSerializer(many=True)
     owner = UserSerializer(read_only=True)
     cover_pick = serializers.IntegerField(required=False)
+    shared_owners = UserSerializer(read_only=False, many=True)
 
     class Meta:
         model = Project
         fields = ('id',
                   'name',
                   'owner',
+                  'shared_owners',
                   'percentage_completed',
                   'cover_pick',
                   'cover',
