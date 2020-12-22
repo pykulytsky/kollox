@@ -270,5 +270,5 @@ class ToDoItem(models.Model):
         return f'<ToDoItem {self.pk}:{self.title}>'
 
     class Meta:
-        ordering = ['is_completed', ]
+        ordering = ['is_completed', '-started_time']
         verbose_name = 'Todo Item'

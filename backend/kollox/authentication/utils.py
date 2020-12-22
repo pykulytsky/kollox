@@ -1,7 +1,7 @@
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 import uuid
-from authentication.models import User
+from .models import User
 import logging
 
 logger = logging.getLogger('main')

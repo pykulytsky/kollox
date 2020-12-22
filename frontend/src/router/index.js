@@ -15,6 +15,7 @@ import ImportantTodos from "@/components/ImportantTodos";
 import ErrorPage from "@/components/ErrorPage.vue";
 
 import Search from '@/components/Search'
+import Calendar from "@/components/Calendar";
 
 Vue.use(VueRouter)
 
@@ -129,6 +130,12 @@ const routes = [
     path: '/search',
     component: Search,
     name: 'search'
+  },
+
+  {
+    path: '/calendar',
+    component: Calendar,
+    name: 'calendar'
   },
 
   {

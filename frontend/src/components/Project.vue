@@ -1,12 +1,23 @@
 <template>
   <v-container fluid fill-height>
+    <v-progress-circular
+        :rotate="360"
+        :size="70"
+        :width="10"
+        :value="percent"
+        class="progress"
+        color="accent-4"
+    >
+      {{ percent }}%
+    </v-progress-circular>
+
     <v-layout align-center justify-center>
       <v-flex
           xs12 sm8 md8>
         <v-card
             elevation="16"
             :loading="loading"
-            class="d-flex flex-column main-card justify-space-around"
+            class="d-flex flex-column main-card justify-space-between"
 
         >
           <v-img
@@ -15,16 +26,6 @@
               height="200px"
 
           >
-            <v-progress-circular
-                :rotate="360"
-                :size="70"
-                :width="10"
-                :value="percent"
-                class="progress"
-                color="accent-4"
-            >
-              {{ percent }}%
-            </v-progress-circular>
 
           </v-img>
           <div class="card__header1">
@@ -61,7 +62,7 @@
 
 
                 <v-list-item
-                    @click="shareDialog = true"
+                    @click="loadUsersForShare"
                 >
                   <v-list-item-icon>
                     <v-icon>
@@ -480,9 +481,6 @@
     </v-dialog>
 
 
-
-
-
     <v-dialog
         v-model="dialog"
         persistent
@@ -618,6 +616,38 @@
       </v-card>
     </v-dialog>
 
+
+<!--    share project dialog-->
+    <v-dialog
+        width="500px"
+        v-model="shareDialog"
+    >
+      <v-card
+      >
+        <v-card-title>
+          Select user to share account
+        </v-card-title>
+        <v-autocomplete
+            hide-no-data
+            hide-selected
+            v-model="selectedUser"
+            class="ml-5 mr-5"
+            :items="usersForShare"
+        label="Enter usrename or name of user"
+        >
+        </v-autocomplete>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            @click="shareDialog = false"
+          >Cancel</v-btn>
+          <v-btn
+            @click="shareList"
+          >Share</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 
 </template>
@@ -645,6 +675,10 @@ export default {
       dateRequired: false,
 
       deleteDialog: false,
+
+      usersList: [],
+
+      selectedUser: null,
 
       todoList: {
         id: 0,
@@ -713,7 +747,10 @@ export default {
       ],
       initialSelected: [],
       coverPicker: false,
-      selectedCover: null
+      selectedCover: null,
+
+      userListLoading: false,
+      usersForShare: []
     }
   },
   computed: {
@@ -757,6 +794,27 @@ export default {
 
   },
   methods: {
+    loadUsersForShare () {
+      this.userListLoading = true
+      axios.get('http://localhost:8000/api/auth/user/',
+          {
+            headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+          })
+          .then(response => {
+            response.data.forEach(user => {
+              if (this.$store.getters.user.username !== user.username) {
+                if (user.first_name && user.last_name) {
+                  this.usersForShare.push(user.first_name + user.last_name)
+                } else {
+                  this.usersForShare.push(user.username)
+                }
+              }
+            })
+          })
+
+      this.shareDialog = true
+      this.userListLoading = false
+    },
     star (todo_id) {
       console.log("Todo id",todo_id)
       console.log("Tasks: " ,this.todoList.tasks)
@@ -859,6 +917,18 @@ export default {
     saveDate (date) {
       this.isDateUsing = true
       this.$refs.menu.save(date)
+    },
+
+    shareList () {
+      this.$store.dispatch('setLoading', true)
+
+      axios.post('http://localhost:8000/api/auth/user/',
+          {
+            shared_owners: this.selectedUser
+          }
+      )
+
+      this.$store.dispatch('setLoading', false)
     },
 
     chooseCover () {
@@ -1095,22 +1165,6 @@ export default {
     const config = {
       headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
     };
-
-    console.log("Cover: ", this.todoList.cover)
-    // axios.get(url, config)
-    //     .then( response => {
-    //       this.todoList.id = response.data.id
-    //       this.todoList.name = response.data.name
-    //       this.todoList.owner = response.data.owner
-    //       this.todoList.favorite = response.data.favorite
-    //       this.todoList.tasks = response.data.tasks
-    //       this.todoList.percentageCompleted = response.data.percentage_completed
-    //       this.todoList.percentageCompleted *= 100
-    //
-    //     })
-    //     .catch(error => {
-    //       this.$store.dispatch('setError', error.message)
-    //     })
   },
   mounted() {
     console.log(this.$route.params)
@@ -1157,21 +1211,25 @@ export default {
   height: 100%;
   min-height: 100%;
   justify-content: space-between;
-  padding-top: 5px;
+  margin-top: 0;
 
 }
 
-
-
 .todo__item {
-  border-radius: 5px;
+  border-radius: 25px;
   margin: 5px 10px;
   display: flex;
   justify-content: flex-start;
   align-items: baseline;
-
   background-color: #121212;
+  padding-bottom: 0px;
 }
+
+.todo__item:hover {
+  padding-left: 5px;
+  transition: padding-left .2s;
+}
+
 .todo__item:last-child {
   margin-bottom: 25px;
 }
@@ -1209,13 +1267,6 @@ p {
   margin-right: 50px;
 }
 
-
-
-.progress__section {
-  display: flex;
-  justify-content: center;
-}
-
 .date__info {
   margin-left: 10px;
 }
@@ -1225,8 +1276,9 @@ p {
 }
 
 .progress {
-  position: absolute;
-  right: 0;
+  position: fixed;
+  right: 5%;
+  top: 10%;
   margin-right: 5px;
   margin-top: 5px;
 }

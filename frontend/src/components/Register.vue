@@ -12,6 +12,7 @@
 
       >
         <v-text-field
+            prepend-icon="mdi-account"
             v-model="username"
             class="register__field"
             hint="This field uses counter prop"
@@ -20,6 +21,7 @@
             required
         ></v-text-field>
         <v-text-field
+            prepend-icon="mdi-email"
             v-model="email"
             class="register__field"
             hint="This field uses counter prop"
@@ -29,6 +31,7 @@
             required
         ></v-text-field>
         <v-text-field
+            prepend-icon="mdi-key"
             v-model="password"
             class="register__field"
             hint="This field uses counter prop"

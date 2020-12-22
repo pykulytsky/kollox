@@ -51,16 +51,9 @@ class LoginSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    avatar = serializers.SerializerMethodField()
-
     class Meta:
         model = User
-        fields = ('pk', 'username', 'first_name', 'last_name', 'email_verified', 'avatar')
-
-    def get_avatar(self, user):
-        request = self.context.get('request')
-        avatar = user.avatar.url
-        return request.build_absolute_uri(avatar)
+        fields = ('pk', 'username', 'first_name', 'last_name',)
 
 
 class UserDetailSerializer(serializers.ModelSerializer):

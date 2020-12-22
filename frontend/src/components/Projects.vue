@@ -35,12 +35,13 @@
       </div>
     </v-row>
     <v-progress-circular
+        class="text-center"
         v-else
         indeterminate
         color="primary"
     ></v-progress-circular>
     <v-btn
-        class="float__btn deep-purple accent-4"
+        class="float__btn grey darken-4"
         fixed
         @click="openDialog"
         dark

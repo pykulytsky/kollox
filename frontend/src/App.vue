@@ -2,7 +2,7 @@
   <v-app>
     <v-navigation-drawer
         app
-        class="deep-purple accent-4"
+        class="grey darken-4"
         v-model="drawer"
         dark
 
@@ -24,6 +24,7 @@
         </v-list-item>
 
         <v-list-item
+            class="drawer__profile"
             v-if="user"
             to="/profile"
             link>
@@ -47,6 +48,7 @@
       <v-divider></v-divider>
       <v-list>
         <v-list-item
+            class="drawer__item"
             @click="drawer = false"
             v-for="item in links"
             :key="item.name"
@@ -69,7 +71,7 @@
     <v-app-bar
         :loading="loading"
         app
-        color="deep-purple accent-4"
+        color="grey darken-4"
         dense
         dark
     >
@@ -141,6 +143,42 @@
       <router-view>
 
       </router-view>
+
+<!--      <v-footer-->
+<!--          dark-->
+<!--          padless-->
+<!--          app-->
+<!--      >-->
+<!--        <v-card-->
+<!--            flat-->
+<!--            tile-->
+<!--            class="grey darken-4"-->
+<!--        >-->
+<!--          <v-card-text>-->
+<!--            <v-btn-->
+<!--                v-for="icon in icons"-->
+<!--                :key="icon"-->
+<!--                class="mx-4 white&#45;&#45;text"-->
+<!--                icon-->
+<!--            >-->
+<!--              <v-icon size="24px">-->
+<!--                {{ icon }}-->
+<!--              </v-icon>-->
+<!--            </v-btn>-->
+<!--          </v-card-text>-->
+
+<!--          <v-card-text class="white&#45;&#45;text pt-0">-->
+<!--            Phasellus feugiat arcu sapien, et iaculis ipsum elementum sit amet. Mauris cursus commodo interdum. Praesent ut risus eget metus luctus accumsan id ultrices nunc. Sed at orci sed massa consectetur dignissim a sit amet dui. Duis commodo vitae velit et faucibus. Morbi vehicula lacinia malesuada. Nulla placerat augue vel ipsum ultrices, cursus iaculis dui sollicitudin. Vestibulum eu ipsum vel diam elementum tempor vel ut orci. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.-->
+<!--          </v-card-text>-->
+
+<!--          <v-divider></v-divider>-->
+
+<!--          <v-card-text class="white&#45;&#45;text">-->
+<!--            {{ new Date().getFullYear() }} — <strong>Vuetify</strong>-->
+<!--          </v-card-text>-->
+<!--        </v-card>-->
+<!--      </v-footer>-->
+
       <v-snackbar
           dark
           class="error__bar"
@@ -213,6 +251,11 @@ export default {
     links () {
       if (this.isUserAuthenticated) {
         return [
+          {
+            url: '/today',
+            icon: 'mdi-calendar',
+            name: 'Today'
+          },
           {
             url: '/all-todo-lists',
             icon: 'mdi-check-all',
@@ -331,6 +374,16 @@ export default {
   font-family: 'Andika New Basic', sans-serif;
 }
 
+.drawer__profile:hover {
+  padding-left: 5px;
+  transition: padding-left .4s ;
+}
+
+.drawer__item:hover {
+  padding-left: 40px;
+  transition: padding-left .4s ;
+}
+
 .main-card {
   overflow: hidden;
   height: 100%;
@@ -382,5 +435,7 @@ p {
 .err_btn {
   margin-left: 130px;
 }
+
+
 
 </style>

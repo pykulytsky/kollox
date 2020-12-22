@@ -11,6 +11,7 @@
       validation
       >
         <v-text-field
+            prepend-icon="mdi-account"
             v-model="username"
             class="login__field"
             hint="This field uses counter prop"
@@ -19,6 +20,7 @@
             :rules="rules"
         ></v-text-field>
         <v-text-field
+            prepend-icon="mdi-email"
             v-model="email"
             type="email"
             hint="This field uses counter prop"
@@ -26,6 +28,7 @@
             :rules="emailRules"
         ></v-text-field>
         <v-text-field
+            prepend-icon="mdi-key"
             v-model="password"
             hint="This field uses counter prop"
             type="password"

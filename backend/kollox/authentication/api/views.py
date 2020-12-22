@@ -11,6 +11,8 @@ from authentication.api.serializers import \
      UserSerializer,
      UserDetailSerializer)
 
+from rest_framework import generics
+
 
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
@@ -42,6 +44,12 @@ class LoginAPIView(APIView):
         serializer.is_valid(raise_exception=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserListAPI(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated, )
+    queryset = User.objects.all()
 
 
 class UserAPIView(APIView):
