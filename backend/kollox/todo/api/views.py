@@ -131,6 +131,54 @@ class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     lookup_url_kwarg = 'id'
     queryset = Project.objects.all()
 
+    def patch(self, request, id, *args, **kwargs):
+        if 'shared_owners' in request.data.keys():
+            _project = Project.objects.get(id=id)
+            try:
+                shared_owner = User.objects.get(id=request.data['shared_owners'])
+                _project.shared_owners.add(shared_owner)
+                _project.save()
+                serializer = self.serializer_class(_project)
+                return Response(serializer.data,
+                                status=status.HTTP_200_OK)
+            except Project.DoesNotExists:
+                return Response({
+                    'detail': 'User does not exists'
+                },
+                                status=status.HTTP_404_NOT_FOUND)
+        else:
+            return super().patch(request, *args, **kwargs)
+
+    # def patch(self, request, id, *args, **kwargs):
+    #     _project = Project.objects.get(id=id)
+    #     if 'shared_owners' in request.data.keys():
+    #         try:
+    #             shared_owner = User.objects.get(id=request.data['shared_owners'])
+    #             _project.shared_owners.add(shared_owner)
+    #             _project.save()
+    #             serializer = self.serializer_class(_project)
+    #             return Response(serializer.data,
+    #                             status=status.HTTP_200_OK)
+    #         except Project.DoesNotExists:
+    #             return Response({
+    #                 'detail': 'User does not exists'
+    #             },
+    #                             status=status.HTTP_404_NOT_FOUND)
+    #     else:
+    #             # TODO Fix serializer
+    #         serializer = self.serializer_class(_project, data=request.data, many=False)
+    #         # serializer.update(_project, serializer.validated_data)
+    #         # return Response(serializer.data,
+    #         #                 status=status.HTTP_200_OK)
+    #         if serializer.is_valid():
+    #             serializer.save()
+    #             return Response(serializer.data,
+    #                             status=status.HTTP_200_OK)
+    #         else:
+    #             return Response({
+    #                 'detail': 'Wrong data in data field'
+    #             })
+
     # def patch(self, request, id):
     #     image_src = request.data['cover']
     #     cover = open('d:/repos/kollox/frontend/src/assets/' + image_src)

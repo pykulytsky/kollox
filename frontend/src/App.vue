@@ -252,9 +252,9 @@ export default {
       if (this.isUserAuthenticated) {
         return [
           {
-            url: '/today',
+            url: '/calendar',
             icon: 'mdi-calendar',
-            name: 'Today'
+            name: 'Calendar'
           },
           {
             url: '/all-todo-lists',
@@ -435,7 +435,4 @@ p {
 .err_btn {
   margin-left: 130px;
 }
-
-
-
 </style>

@@ -83,12 +83,8 @@ def verify_email(request, verification_code):
             },
             status=status.HTTP_304_NOT_MODIFIED)
 
-
         if user.email_verification_code == verification_code:
             user.email_verified = True
-
-
-
             return Response({
                 'status': 'OK'
             },

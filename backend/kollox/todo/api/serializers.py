@@ -5,6 +5,22 @@ from authentication.models import User
 from authentication.api.serializers import UserSerializer, UserDetailSerializer
 
 from PIL import Image
+from todo.models import Image as ImageModel
+from versatileimagefield.serializers import VersatileImageFieldSerializer
+from rest_flex_fields import FlexFieldsModelSerializer
+
+
+class ImageSerializer(FlexFieldsModelSerializer):
+    image = VersatileImageFieldSerializer(
+        sizes=[
+            ('full_size', 'url'),
+            ('thumbnail', 'thumbnail__100x100'),
+        ]
+    )
+
+    class Meta:
+        model = ImageModel
+        fields = ['pk', 'name', 'image']
 
 class TodoRelatedField(serializers.RelatedField):
     def to_representation(self, value):
@@ -119,13 +135,15 @@ class SimpleToDoListDetailSerializer(serializers.ModelSerializer):
                   'total_tasks')
 
     def save(self, **kwargs):
-        img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
-        cover = img.filename
+        if self.validated_data['cover_pick']:
+            img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
+            cover = img.filename
         super().save(**kwargs)
 
     def update(self, instance, validated_data):
-        img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
-        instance.cover = img.filename
+        if validated_data['cover_pick']:
+            img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
+            instance.cover = img.filename
         instance.save()
         return instance
 
@@ -150,12 +168,23 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
                   'total_tasks')
 
     def save(self, **kwargs):
-        img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
-        cover = img.filename
+        if 'cover_pick' in self.validated_data.keys():
+            img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
+            cover = img.filename
         super().save(**kwargs)
 
     def update(self, instance, validated_data):
-        img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
-        instance.cover = img.filename
+        if 'cover_pick' in validated_data.keys():
+            img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
+            instance.cover = img.filename
+
+        instance.name = validated_data.get('name', instance.name)
+        instance.favorite = validated_data.get('favorite', instance.favorite)
+        print(self.validated_data.keys())
+        # TODO FIx patching shared owners
+        if 'shared_owners' in validated_data.keys():
+            _shared_owner = User.objects.get(id=self.validated_data.get('shared_owners'))
+            instance.shared_owners.add(_shared_owner)
+
         instance.save()
         return instance

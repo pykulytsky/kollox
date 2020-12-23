@@ -172,11 +172,14 @@
             </v-btn>
           </div>
           <div
+
               class="todo__item"
               v-if="todoList.tasks"
-              v-for="(todo, i) in todoList.tasks"
+              v-for="todo in todoList.tasks"
+              :key="todo.id"
           >
             <v-checkbox
+                ref="check"
                 color="indigo darken-3"
                 class="item__checkbox round"
                 v-model="todo.is_completed"
@@ -185,7 +188,8 @@
             ></v-checkbox>
 
             <p
-            :class="{'completed-task': todo.is_completed}"
+              :class="{'completed-task': todo.is_completed}"
+              @click="onPClick"
             >{{ todo.title }}</p>
 
             <small
@@ -203,8 +207,7 @@
             <v-spacer></v-spacer>
             <v-btn
                 icon
-
-                @click="openDialog"
+                @click="showTodoDetail(todo.id)"
             >
               <v-icon>mdi-dots-vertical</v-icon>
               <p
@@ -224,6 +227,13 @@
               v-else
               >mdi-star-outline</v-icon>
             </v-btn>
+            <div
+                v-if="todo.detail"
+                class="todo__detail">
+              <p>Lorem ipsum dolor.</p>
+              <p>Lorem ipsum.</p>
+              <p>Lorem ipsum dolor sit.</p>
+            </div>
           </div>
           <div
               v-else
@@ -794,6 +804,11 @@ export default {
 
   },
   methods: {
+    onPClick () {
+      this.$refs.check.click()
+
+    },
+
     loadUsersForShare () {
       this.userListLoading = true
       axios.get('http://localhost:8000/api/auth/user/',
@@ -902,6 +917,11 @@ export default {
                     this.todoList.percentageCompleted *= 100
                     console.log("% after: ", this.todoList.percentageCompleted)
                     this.$store.dispatch('setLoading', false)
+
+
+                    for (let i=0; i< this.todoList.tasks.length; i++) {
+                      this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
+                    }
                   })
                   .catch(error => {
                     this.$store.dispatch('setError', error.message)
@@ -957,7 +977,6 @@ export default {
         const config = {
           headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
         };
-
         axios.get(url, config)
             .then( response => {
               this.todoList.id = response.data.id
@@ -970,6 +989,10 @@ export default {
               this.todoList.percentageCompleted *= 100
               console.log("%: ", this.percentageCompleted)
               console.log("response %: ", response.data.percentage_completed)
+
+              for (let i=0; i< this.todoList.tasks.length; i++) {
+                this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
+              }
             })
             .catch(error => {
               this.$store.dispatch('setError', error.message)
@@ -1015,6 +1038,10 @@ export default {
               this.todoList.percentageCompleted = response.data.percentage_completed
               this.todoList.percentageCompleted *= 100
 
+              for (let i=0; i< this.todoList.tasks.length; i++) {
+                this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
+              }
+
             })
             .catch(error => {
               this.$store.dispatch('setError', error.message)
@@ -1023,6 +1050,17 @@ export default {
     },
     openDialog() {
       this.dialog = true
+    },
+
+    showTodoDetail (todoId) {
+      let index = -1
+
+      for (let i=0;i < this.todoList.tasks.length; i++) {
+        if (this.todoList.tasks[i]['id'] == todoId) {
+          index = i
+        }
+      }
+      this.todoList.tasks[index].detail = true
     },
 
     addTodo () {
@@ -1061,6 +1099,10 @@ export default {
                     this.todoList.percentageCompleted = response.data.percentage_completed
                     this.todoList.percentageCompleted *= 100
 
+                    for (let i=0; i< this.todoList.tasks.length; i++) {
+                      this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
+                    }
+
                   })
                   .catch(error => {
                     this.$store.dispatch('setError', error.message)
@@ -1087,6 +1129,10 @@ export default {
               this.todoList.cover = response.data.cover
               this.todoList.percentageCompleted = response.data.percentage_completed
               this.todoList.percentageCompleted *= 100
+
+              for (let i=0; i< this.todoList.tasks.length; i++) {
+                this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
+              }
 
             })
             .catch(error => {
@@ -1122,6 +1168,9 @@ export default {
                     this.todoList.percentageCompleted = response.data.percentage_completed
                     this.todoList.percentageCompleted *= 100
 
+                    for (let i=0; i< this.todoList.tasks.length; i++) {
+                      this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
+                    }
                   })
                   .catch(error => {
                     this.$store.dispatch('setError', error.message)
@@ -1149,6 +1198,10 @@ export default {
               this.todoList.percentageCompleted = response.data.percentage_completed
               this.todoList.percentageCompleted *= 100
 
+              for (let i=0; i< this.todoList.tasks.length; i++) {
+                this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
+              }
+
             })
             .catch(error => {
               this.$store.dispatch('setError', error.message)
@@ -1160,14 +1213,8 @@ export default {
 
     }
   },
-  updated() {
-    const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
-    const config = {
-      headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
-    };
-  },
+
   mounted() {
-    console.log(this.$route.params)
     const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
     const config = {
       headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
@@ -1183,15 +1230,20 @@ export default {
           this.todoList.cover = response.data.cover
           this.todoList.percentageCompleted = response.data.percentage_completed
           this.todoList.percentageCompleted *= 100
-          console.log("%: ", this.percentageCompleted)
-          console.log("response %: ", response.data.percentage_completed)
+
+          // this.todoList.tasks.forEach(task => {
+          //   task = task + {detail: false}
+          // })
+
+          for (let i=0; i< this.todoList.tasks.length; i++) {
+            this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
+          }
         })
         .catch(error => {
           this.$store.dispatch('setError', error.message)
         })
 
 
-    console.log("%: " ,this.percentageCompleted)
   }
 
 }

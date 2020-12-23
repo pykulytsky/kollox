@@ -1,14 +1,13 @@
 <template>
   <v-row class="fill-height mt-0">
     <v-col>
-      <v-sheet height="64">
+      <v-sheet class="mt-0">
         <v-toolbar
             flat
         >
           <v-btn
-              outlined
               class="mr-4"
-              color="grey darken-2"
+              color="grey darken-4"
               @click="setToday"
           >
             Today
@@ -17,7 +16,7 @@
               fab
               text
               small
-              color="grey darken-2"
+              color="grey darken-4"
               @click="prev"
           >
             <v-icon small>
@@ -28,7 +27,7 @@
               fab
               text
               small
-              color="grey darken-2"
+              color="grey darken-4"
               @click="next"
           >
             <v-icon small>
@@ -77,7 +76,7 @@
         <v-calendar
             ref="calendar"
             v-model="focus"
-            color="primary"
+            color="grey darken-4"
             :events="events"
             :event-color="getEventColor"
             :type="type"
@@ -93,7 +92,7 @@
             offset-x
         >
           <v-card
-              color="grey lighten-4"
+              color="grey darken-4"
               min-width="350px"
               flat
           >

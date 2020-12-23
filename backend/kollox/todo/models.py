@@ -12,6 +12,8 @@ from authentication.validators import percent_validation
 
 from django.forms.models import model_to_dict
 
+from versatileimagefield.fields import VersatileImageField, PPOIField
+
 import django.dispatch
 
 # Create your models here.
@@ -96,6 +98,19 @@ class ModelDiffMixin(object):
     def _dict(self):
         return model_to_dict(self, fields=[field.name for field in
                                            self._meta.fields])
+
+
+class Image(models.Model):
+    title = models.CharField(max_length=256)
+    image = VersatileImageField(
+        'Image',
+        upload_to='assets/covers/',
+        ppoi_field='image_ppoi'
+    )
+    image_ppoi = PPOIField()
+
+    def __str__(self):
+        return f'<Image: {self.title}>'
 
 
 class BaseToDoList(models.Model):
