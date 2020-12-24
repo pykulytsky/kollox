@@ -125,6 +125,7 @@
                     v-bind="attrs"
                     v-on="on"
                     v-if="!datePicker"
+
                     icon
                 >
                   <v-icon
@@ -133,29 +134,56 @@
                   </v-icon>
                 </v-btn>
               </template>
-              <v-date-picker
-                  v-model="date"
-                  no-title
-                  color="deep-purple"
-                  scrollable
-                  :min="todayDate"
-              >
-                <v-spacer></v-spacer>
-                <v-btn
-                    text
-                    color="primary"
-                    @click="menu = false"
+              <div class="date__time">
+                <v-date-picker
+                    v-model="date"
+                    v-if="!chooseTime"
+                    no-title
+                    color="deep-purple"
+                    scrollable
+                    :min="todayDate"
                 >
-                  Cancel
-                </v-btn>
-                <v-btn
-                    text
-                    color="primary"
-                    @click="saveDate(date)"
+                  <v-spacer></v-spacer>
+                  <v-btn
+                      text
+                      color="primary"
+                      @click="menu = false"
+                  >
+                    Cancel
+                  </v-btn>
+                  <v-btn
+                      text
+                      color="primary"
+                      @click="saveDate(date)"
+                  >
+                    OK
+                  </v-btn>
+                </v-date-picker>
+                <v-time-picker
+                    format="24hr"
+                    v-model="time"
+                    v-else
                 >
-                  OK
-                </v-btn>
-              </v-date-picker>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                      text
+                      color="primary"
+                      @click="closeDateTime"
+                  >
+                    Cancel
+                  </v-btn>
+                  <v-btn
+                      text
+                      color="primary"
+                      @click="saveDateTime(time)"
+                  >
+                    OK
+                  </v-btn>
+
+                </v-time-picker>
+
+
+              </div>
             </v-menu>
 
             <v-btn
@@ -757,7 +785,13 @@ export default {
       selectedCover: null,
 
       userListLoading: false,
-      usersForShare: []
+      usersForShare: [],
+
+      chooseTime: false,
+      tempDate: null,
+      time: '00:00',
+
+
     }
   },
   computed: {
@@ -801,6 +835,11 @@ export default {
 
   },
   methods: {
+    closeDateTime () {
+      this.menu = false
+      this.chooseTime = false
+    },
+
     onPClick () {
       this.$refs.check.click()
 
@@ -935,8 +974,16 @@ export default {
 
     saveDate (date) {
       this.isDateUsing = true
-      this.$refs.menu.save(date)
+      this.chooseTime = true
+
     },
+
+    saveDateTime(time) {
+      this.$refs.menu.save(new Date(this.date + 'T' + time))
+      console.log(new Date(this.date + 'T' + time))
+    },
+
+
 
     shareList () {
       this.$store.dispatch('setLoading', true)
@@ -949,7 +996,6 @@ export default {
       .then(response => {
 
       })
-
       this.$store.dispatch('setLoading', false)
     },
 
@@ -1071,13 +1117,13 @@ export default {
         headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
       };
       if (this.isDateUsing) {
-        const date = this.date.toString() + "T00:00"
+        console.log(this.date)
 
         axios.post(url, {
           title: this.newTodo,
           todo_list_id: this.$route.params['id'],
           todo_list_type: this.todoType,
-          expired_time: date
+          expired_time: this.date
         }, {
           headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
         })

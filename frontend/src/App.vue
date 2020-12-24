@@ -84,12 +84,13 @@
       <v-spacer></v-spacer>
 
       <v-btn
-          v-if="currentRoute.params"
+          v-if="isDetailPageRoute"
           @click="isListFavorite = !isListFavorite"
           icon>
         <v-icon>{{heart}}</v-icon>
       </v-btn>
       <v-menu
+          v-model="searchMenu"
           :close-on-content-click="false"
       >
 
@@ -101,13 +102,14 @@
             <v-icon>mdi-magnify</v-icon>
           </v-btn>
       </template>
-
+        <div class="search__dialog">
           <v-text-field
+              @keydown.enter="search"
+              v-model="searchParams"
               placeholder="Search..."
-              @click="() => {}"
-          class="search__input"
+              class="search__input"
           ></v-text-field>
-
+        </div>
       </v-menu>
       <v-menu
           left
@@ -166,7 +168,10 @@ export default {
       dialog: false,
       isListFavorite: false,
       heartIcon: 'mdi-heart',
-      heartOutlinedIcon: 'mdi-heart-outline'
+      heartOutlinedIcon: 'mdi-heart-outline',
+
+      searchParams: '',
+      searchMenu: false
     }
   },
   computed: {
@@ -270,8 +275,8 @@ export default {
       return this.$store.getters.isAuthenticated
     },
 
-    currentRoute () {
-      return this.$route
+    isDetailPageRoute () {
+      return !!this.$route.params['id'];
     },
     loading () {
       return this.$store.getters.loading
@@ -299,6 +304,12 @@ export default {
     }
   },
   methods: {
+    search () {
+      this.searchMenu = false
+      this.$router.push('/search?s=' + this.searchParams)
+      this.searchParams = ''
+    },
+
     addToFavorite () {
       this.favorite = !this.favorite
     },
@@ -310,7 +321,7 @@ export default {
     }
   },
   updated() {
-
+    console.log(this.$route.params)
   },
 
   beforeCreate() {
