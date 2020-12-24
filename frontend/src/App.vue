@@ -137,67 +137,13 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-
     <v-main>
-
       <router-view>
 
       </router-view>
-
-<!--      <v-footer-->
-<!--          dark-->
-<!--          padless-->
-<!--          app-->
-<!--      >-->
-<!--        <v-card-->
-<!--            flat-->
-<!--            tile-->
-<!--            class="grey darken-4"-->
-<!--        >-->
-<!--          <v-card-text>-->
-<!--            <v-btn-->
-<!--                v-for="icon in icons"-->
-<!--                :key="icon"-->
-<!--                class="mx-4 white&#45;&#45;text"-->
-<!--                icon-->
-<!--            >-->
-<!--              <v-icon size="24px">-->
-<!--                {{ icon }}-->
-<!--              </v-icon>-->
-<!--            </v-btn>-->
-<!--          </v-card-text>-->
-
-<!--          <v-card-text class="white&#45;&#45;text pt-0">-->
-<!--            Phasellus feugiat arcu sapien, et iaculis ipsum elementum sit amet. Mauris cursus commodo interdum. Praesent ut risus eget metus luctus accumsan id ultrices nunc. Sed at orci sed massa consectetur dignissim a sit amet dui. Duis commodo vitae velit et faucibus. Morbi vehicula lacinia malesuada. Nulla placerat augue vel ipsum ultrices, cursus iaculis dui sollicitudin. Vestibulum eu ipsum vel diam elementum tempor vel ut orci. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.-->
-<!--          </v-card-text>-->
-
-<!--          <v-divider></v-divider>-->
-
-<!--          <v-card-text class="white&#45;&#45;text">-->
-<!--            {{ new Date().getFullYear() }} — <strong>Vuetify</strong>-->
-<!--          </v-card-text>-->
-<!--        </v-card>-->
-<!--      </v-footer>-->
-
-      <v-snackbar
-          dark
-          class="error__bar"
-          v-if="error"
-          :value="true"
-      >
-        {{ error }}
-
-          <v-btn
-              dark
-              class="err_btn"
-              color="deep-purple"
-              @click="closeError"
-          >
-            Close
-          </v-btn>
-      </v-snackbar>
     </v-main>
-
+    <notifications group="main" position="bottom right"/>
+    <notifications position="top center" group="loginError"/>
   </v-app>
 </template>
 
@@ -331,6 +277,27 @@ export default {
       return this.$store.getters.loading
     }
   },
+  watch: {
+    error () {
+      if (this.error !== null) {
+        if (this.$router.currentRoute.path == '/login') {
+          if (this.error == "Request failed with status code 400") {
+            this.$notify({
+              group: 'loginError',
+              type: 'error',
+              title: "<p class='text-center'>Incorrect login credentials</p>"
+            })
+          }
+        } else {
+          this.$notify({
+            group: 'main',
+            type: 'error',
+            title: this.error
+          })
+        }
+      }
+    }
+  },
   methods: {
     addToFavorite () {
       this.favorite = !this.favorite
@@ -342,15 +309,10 @@ export default {
       this.$store.dispatch('clearError')
     }
   },
-  // updated() {
-  //   console.log("Storage: ",localStorage.getItem('auth'))
-  //
-  // },
-  // mounted() {
-  //   console.log("Storage: ",localStorage.getItem('auth'))
-  //   this.$store.dispatch('loadUser')
-  //   this.$store.dispatch('autoLogin')
-  // },
+  updated() {
+
+  },
+
   beforeCreate() {
     try {
       this.$store.dispatch('loadUser')
@@ -362,16 +324,23 @@ export default {
     }
   }
 
+
 };
 </script>
 
 <style>
-* {
-  font-family: 'Open Sans', sans-serif;
+@font-face {
+  font-family: 'Proxima Nova Semibold';
+  src: url('assets/fonts/ProximaNova-Semibold.eot');
+  src: url('assets/fonts/ProximaNova-Semibold.eot?#iefix') format('embedded-opentype'),
+  url('assets/fonts/ProximaNova-Semibold.woff') format('woff'),
+  url('assets/fonts/ProximaNova-Semibold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
-.card__header__text {
-  font-family: 'Andika New Basic', sans-serif;
+* {
+  font-family: 'Proxima Nova Semibold', sans-serif;
 }
 
 .drawer__profile:hover {
@@ -382,6 +351,11 @@ export default {
 .drawer__item:hover {
   padding-left: 40px;
   transition: padding-left .4s ;
+}
+
+.notification-title {
+  color: #121212;
+  font-size: 14px;
 }
 
 .main-card {

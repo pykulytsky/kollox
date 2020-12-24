@@ -89,8 +89,6 @@ def verify_email(request, verification_code):
                 'status': 'OK'
             },
             status=status.HTTP_200_OK)
-
-
         else:
             return Response({
                 'status': 'Wrong verification code.'

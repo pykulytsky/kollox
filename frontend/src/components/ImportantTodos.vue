@@ -350,9 +350,7 @@ export default {
 </script>
 
 <style>
-* {
-  font-family: 'Open Sans', sans-serif;
-}
+
 
 .card__header__text {
   font-family: 'Andika New Basic', sans-serif;

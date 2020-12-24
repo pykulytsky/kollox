@@ -55,6 +55,7 @@
         </router-link>
       </v-form>
     </v-card>
+
   </v-container>
 </template>
 
@@ -99,33 +100,13 @@ export default {
             .then(() => {
               if (!this.$store.getters.error) {
                 this.$store.dispatch('loadAllTodoLists')
-                this.$router.push('/all-todo-lists')
+                this.$router.push('/all-todo-lists?msg=verify_email')
               }
             })
-            .catch(error => {
-              console.log("error on submit")
-              this.$store.dispatch('setError', error.message)
-              this.$router.push('')
-            })
+
 
       }
-      // this.$store.dispatch('registerUser', {
-      //   username: this.username,
-      //   email: this.email,
-      //   password: this.password
-      // })
-      // this.$http.post('http://localhost:8000/api/auth/register/',
-      //     {username: this.username,
-      //       email: this.email,
-      //       password: this.password
-      //     })
-      // .then(response => {
-      //   console.log(response)
-      //   return response.json()
-      // })
-      // .then( token => {
-      //   console.log(token)
-      // })
+
     }
   },
 

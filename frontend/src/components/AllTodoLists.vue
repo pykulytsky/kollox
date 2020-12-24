@@ -233,15 +233,23 @@ export  default {
       this.dialog = false
     }
   },
-  mounted() {
-    this.$store.dispatch('loadAllTodoLists')
-    console.log(this.$store.getters.allLists)
-
-  },
+  
   updated() {
     console.log(this.$route)
 
-  }
+  },
+  mounted() {
+    this.$store.dispatch('loadAllTodoLists')
+
+    if (this.$route.query['msg']) {
+      this.$notify({
+        group: 'main',
+        type: 'info',
+        title: 'Verify your email',
+        text: 'Your email is not verified please do it'
+      })
+    }
+  },
 }
 
 </script>

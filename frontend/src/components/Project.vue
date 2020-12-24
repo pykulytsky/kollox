@@ -158,9 +158,6 @@
               </v-date-picker>
             </v-menu>
 
-<!--
--->
-
             <v-btn
                 icon
                 @click="addTodo"
@@ -831,8 +828,6 @@ export default {
       this.userListLoading = false
     },
     star (todo_id) {
-      console.log("Todo id",todo_id)
-      console.log("Tasks: " ,this.todoList.tasks)
       if (this.todoList.tasks[0].is_favorite) {
         return  this.starIcon
       }
@@ -855,8 +850,12 @@ export default {
         this.todoList = null
         this.$router.push('/all-todo-lists')
       })
-
       this.$store.dispatch('setLoading', false)
+
+      this.$notify({
+        title: "<p>You have successfully deleted the list</p>",
+        type: 'success'
+      })
     },
 
     onSelectCover (data) {
@@ -942,11 +941,14 @@ export default {
     shareList () {
       this.$store.dispatch('setLoading', true)
 
-      axios.post('http://localhost:8000/api/auth/user/',
+      axios.post('http://localhost:8000/api/todo/project/' + this.$route.params['id'],
           {
             shared_owners: this.selectedUser
           }
       )
+      .then(response => {
+
+      })
 
       this.$store.dispatch('setLoading', false)
     },
@@ -1251,7 +1253,7 @@ export default {
 
 <style>
 * {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Proxima Nova Semibold', sans-serif;
 }
 
 .card__header__text {
@@ -1313,12 +1315,10 @@ p {
   justify-content: space-between;
   align-items: center;
 }
-
 .add__todo {
   max-width: 85%;
   margin-right: 50px;
 }
-
 .date__info {
   margin-left: 10px;
 }
@@ -1334,5 +1334,4 @@ p {
   margin-right: 5px;
   margin-top: 5px;
 }
-
 </style>

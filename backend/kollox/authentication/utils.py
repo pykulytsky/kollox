@@ -15,5 +15,7 @@ def send_verification_email(verification_code: uuid) -> None:
     if not user.email_verified:
         send_mail(
             subject='Verify Your Account',
-            message=
+            message=render_to_string('authentication/email.html',context={
+                'verification_code': user.email_verification_code
+            })
         )

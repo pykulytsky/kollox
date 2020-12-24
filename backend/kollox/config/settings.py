@@ -167,3 +167,10 @@ import os
 
 MEDIA_ROOT = 'D:/repos/kollox/frontend/src/assets/'
 MEDIA_URL = '/assets/'
+
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BROKER_URL = 'redis://localhost:6379'
+
+CELERY_ACCEPT_CONTENT = ['json', ]
+CELERY_TASK_SERIALIZER = 'json'
