@@ -89,10 +89,7 @@ export default {
 
   methods: {
     onSubmit() {
-
       if (this.$refs.form.validate() ) {
-        // this.$store.dispatch('setLoading', true)
-
         const user = {
           username: this.username,
           email: this.email,

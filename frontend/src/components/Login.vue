@@ -103,8 +103,6 @@ export default {
                 this.$router.push('/all-todo-lists?msg=verify_email')
               }
             })
-
-
       }
 
     }

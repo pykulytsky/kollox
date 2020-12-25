@@ -103,14 +103,23 @@ export default {
 
             await axios.post('http://localhost:8000/api/auth/register/', payload)
                 .then(response => {
-                    commit('setAuth', new Auth(response.data.token))
-                    console.log(response)
-                    localStorage.setItem('auth', JSON.stringify(response.data))
-
-                    commit('loadUser')
+                    if (response.status == 200) {
+                        commit('setAuth', new Auth(response.data.token))
+                        console.log("Response: ",response)
+                        console.log("success")
+                        localStorage.setItem('auth', JSON.stringify(response.data))
+                        commit('setLoading', false)
+                    }
+                    else {
+                        console.log("Error Response: ",response)
+                        commit('setError', "Wrong login credentials")
+                        commit('setLoading', false)
+                        throw error("Wrong login credentials")
+                    }
                 })
                 .catch(error => {
                     commit('setError', error.message)
+                    commit('setLoading', false)
                     throw error
                 })
 

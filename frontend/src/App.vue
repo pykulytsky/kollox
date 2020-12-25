@@ -35,6 +35,7 @@
               {{ user.firstName }} {{ user.lastName }}
             </v-list-item-title>
 
+
             <v-list-item-title
                 v-else
                 class="title">
@@ -47,6 +48,7 @@
 
       <v-divider></v-divider>
       <v-list>
+
         <v-list-item
             class="drawer__item"
             @click="drawer = false"
@@ -321,7 +323,6 @@ export default {
     }
   },
   updated() {
-    console.log(this.$route.params)
   },
 
   beforeCreate() {

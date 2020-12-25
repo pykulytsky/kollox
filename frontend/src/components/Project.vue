@@ -1,4 +1,5 @@
 <template>
+  <div class="project">
   <v-container fluid fill-height>
     <v-progress-circular
         :rotate="360"
@@ -97,6 +98,7 @@
 <!--          NEW TODO-->
           <div class="new__todo">
             <v-text-field
+                @keydown.enter="addTodo"
                 v-model="newTodo"
                 class="add__todo"
             label="Add new todo"
@@ -181,15 +183,12 @@
                   </v-btn>
 
                 </v-time-picker>
-
-
               </div>
             </v-menu>
 
             <v-btn
                 icon
                 @click="addTodo"
-                @keyup.enter="addTodo"
             >
               <v-icon>
                 mdi-plus
@@ -684,7 +683,7 @@
       </v-card>
     </v-dialog>
   </v-container>
-
+</div>
 </template>
 
 <script>
@@ -722,7 +721,8 @@ export default {
         favorite: false,
         owner: null,
         cover: '',
-        percentageCompleted: 0.0
+        percentageCompleted: 0.0,
+        sharedOwners: []
       },
       newTodo: '',
       todoType: 10,
@@ -786,6 +786,7 @@ export default {
 
       userListLoading: false,
       usersForShare: [],
+      userForShareData: [],
 
       chooseTime: false,
       tempDate: null,
@@ -847,6 +848,7 @@ export default {
 
     loadUsersForShare () {
       this.userListLoading = true
+
       axios.get('http://localhost:8000/api/auth/user/',
           {
             headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
@@ -854,11 +856,12 @@ export default {
           .then(response => {
             response.data.forEach(user => {
               if (this.$store.getters.user.username !== user.username) {
-                if (user.first_name && user.last_name) {
+                if (user.first_name && user.last_name && !(user in this.todoList.sharedOwners)) {
                   this.usersForShare.push(user.first_name + user.last_name)
                 } else {
                   this.usersForShare.push(user.username)
                 }
+                this.userForShareData.push(user)
               }
             })
           })
@@ -882,7 +885,7 @@ export default {
         headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
       };
 
-      axios.delete('http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/',
+      axios.delete('http://localhost:8000/api/todo/class=""/' + this.$route.params['id'] + '/',
           config
       )
       .then(response => {
@@ -898,25 +901,11 @@ export default {
     },
 
     onSelectCover (data) {
-      console.log(data.id)
       this.selectedCover = data
     },
 
     completeTask (todo_id) {
-      // axios.get(url, config)
-      //     .then( response => {
-      //       this.todoList.id = response.data.id
-      //       this.todoList.name = response.data.name
-      //       this.todoList.owner = response.data.owner
-      //       this.todoList.favorite = response.data.favorite
-      //       this.todoList.tasks = response.data.tasks
-      //       this.todoList.percentageCompleted = response.data.percentage_completed
-      //       this.todoList.percentageCompleted *= 100
-      //
-      //     })
-      //     .catch(error => {
-      //       this.$store.dispatch('setError', error.message)
-      //     })
+
       const url = 'http://127.0.0.1:8000/api/todo/todo/' + todo_id + '/'
       const config = {
         headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
@@ -927,9 +916,7 @@ export default {
 
       // TODO Fix reloading
 
-      console.log("Complete task: ",todo)
       // TODO Update request, to update not all list, actually specific todo item
-      console.log("% before : ", this.todoList.percentageCompleted)
       axios.patch(url, {
         is_completed: todo.is_completed
       },{
@@ -953,7 +940,7 @@ export default {
                     this.todoList.cover = response.data.cover
                     this.todoList.percentageCompleted = response.data.percentage_completed
                     this.todoList.percentageCompleted *= 100
-                    console.log("% after: ", this.todoList.percentageCompleted)
+                    this.todoList.sharedOwners = response.data.shared_owners
                     this.$store.dispatch('setLoading', false)
 
 
@@ -980,34 +967,56 @@ export default {
 
     saveDateTime(time) {
       this.$refs.menu.save(new Date(this.date + 'T' + time))
-      console.log(new Date(this.date + 'T' + time))
     },
 
 
 
     shareList () {
       this.$store.dispatch('setLoading', true)
+      var userForShare = null
+      this.userForShareData.forEach(user => {
+        if (user.first_name && user.last_name) {
+          if (user.first_name + user.last_name == this.selectedUser) {
+            userForShare = user
+          }
+        }
+        else {
+          if (user.username == this.selectedUser) {
+            userForShare = user
+          }
+        }
+      })
+      console.log(userForShare)
 
-      axios.post('http://localhost:8000/api/todo/project/' + this.$route.params['id'],
+      axios.patch('http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/',
           {
-            shared_owners: this.selectedUser
+            shared_owners: userForShare.pk
+          },
+          {
+            headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
           }
       )
       .then(response => {
-
+        this.$notify({
+          group: 'main',
+          type: 'info',
+          title: 'You shared ' +this.todoList.name,
+          text: 'You have just shared the list, we will notify ' + userForShare.username
+        })
       })
       this.$store.dispatch('setLoading', false)
+
+      this.shareDialog = false
+      this.selectedUser = null
     },
 
     chooseCover () {
       // TODO Add cover picker
       this.$store.dispatch('setLoading', true)
       this.coverPicker = false
-      console.log(this.selectedCover.src)
 
       let coverSrc = this.selectedCover.src.replace('/img/', '').split('.')
       coverSrc = coverSrc[0] + "." + coverSrc[2]
-      console.log(coverSrc)
 
       // const coverResult = this.covers.filter(cover => {
       //   if ()
@@ -1035,8 +1044,7 @@ export default {
               this.todoList.cover = response.data.cover
               this.todoList.percentageCompleted = response.data.percentage_completed
               this.todoList.percentageCompleted *= 100
-              console.log("%: ", this.percentageCompleted)
-              console.log("response %: ", response.data.percentage_completed)
+              this.todoList.sharedOwners = response.data.shared_owners
 
               for (let i=0; i< this.todoList.tasks.length; i++) {
                 this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1061,7 +1069,6 @@ export default {
         return task ? task.id === todo_id: null
       })[0]
 
-      console.log("Favorite: ",todo)
       // TODO Update request, to update not all list, actually specific todo item
 
       axios.patch(url, {
@@ -1085,6 +1092,7 @@ export default {
               this.todoList.tasks = response.data.tasks
               this.todoList.percentageCompleted = response.data.percentage_completed
               this.todoList.percentageCompleted *= 100
+              this.todoList.sharedOwners = response.data.shared_owners
 
               for (let i=0; i< this.todoList.tasks.length; i++) {
                 this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1117,7 +1125,6 @@ export default {
         headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
       };
       if (this.isDateUsing) {
-        console.log(this.date)
 
         axios.post(url, {
           title: this.newTodo,
@@ -1130,7 +1137,6 @@ export default {
             .then(response => {
               this.date = new Date().toISOString().substr(0, 10),
                   this.newTodo = ''
-              console.log(response.data)
               const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
               const config = {
                 headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
@@ -1146,6 +1152,7 @@ export default {
                     this.todoList.cover = response.data.cover
                     this.todoList.percentageCompleted = response.data.percentage_completed
                     this.todoList.percentageCompleted *= 100
+                    this.todoList.sharedOwners = response.data.shared_owners
 
                     for (let i=0; i< this.todoList.tasks.length; i++) {
                       this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1177,6 +1184,7 @@ export default {
               this.todoList.cover = response.data.cover
               this.todoList.percentageCompleted = response.data.percentage_completed
               this.todoList.percentageCompleted *= 100
+              this.todoList.sharedOwners = response.data.shared_owners
 
               for (let i=0; i< this.todoList.tasks.length; i++) {
                 this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1199,7 +1207,6 @@ export default {
             .then(response => {
               this.date = new Date().toISOString().substr(0, 10),
                   this.newTodo = ''
-              console.log(response.data)
               const url = 'http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/'
               const config = {
                 headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
@@ -1215,6 +1222,7 @@ export default {
                     this.todoList.cover = response.data.cover
                     this.todoList.percentageCompleted = response.data.percentage_completed
                     this.todoList.percentageCompleted *= 100
+                    this.todoList.sharedOwners = response.data.shared_owners
 
                     for (let i=0; i< this.todoList.tasks.length; i++) {
                       this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1245,6 +1253,7 @@ export default {
               this.todoList.cover = response.data.cover
               this.todoList.percentageCompleted = response.data.percentage_completed
               this.todoList.percentageCompleted *= 100
+              this.todoList.sharedOwners = response.data.shared_owners
 
               for (let i=0; i< this.todoList.tasks.length; i++) {
                 this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1278,10 +1287,7 @@ export default {
           this.todoList.cover = response.data.cover
           this.todoList.percentageCompleted = response.data.percentage_completed
           this.todoList.percentageCompleted *= 100
-
-          // this.todoList.tasks.forEach(task => {
-          //   task = task + {detail: false}
-          // })
+          this.todoList.sharedOwners = response.data.shared_owners
 
           for (let i=0; i< this.todoList.tasks.length; i++) {
             this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1301,6 +1307,8 @@ export default {
 * {
   font-family: 'Proxima Nova Semibold', sans-serif;
 }
+
+
 
 .card__header__text {
   font-family: 'Andika New Basic', sans-serif;

@@ -141,7 +141,7 @@ class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
                 serializer = self.serializer_class(_project)
                 return Response(serializer.data,
                                 status=status.HTTP_200_OK)
-            except Project.DoesNotExists:
+            except:
                 return Response({
                     'detail': 'User does not exists'
                 },
