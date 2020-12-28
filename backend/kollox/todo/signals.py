@@ -1,7 +1,7 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
-from todo.models import ToDoItem, Project, calculate_percent_signal
+from .models import ToDoItem, Project, calculate_percent_signal
 
 
 @receiver(calculate_percent_signal, sender=ToDoItem)

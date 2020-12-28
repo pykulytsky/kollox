@@ -1,7 +1,7 @@
 from authentication.backend import JWTAuthentication
 from rest_framework.permissions import BasePermission
-
 from authentication.models import User, UserManager
+
 
 class EmailVerified(BasePermission):
     """
@@ -36,3 +36,5 @@ class UserHasJWTToken(BasePermission):
             return True
         else:
             return False
+
+

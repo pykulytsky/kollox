@@ -81,8 +81,11 @@
       @click="drawer = !drawer"
       ></v-app-bar-nav-icon>
 
-      <v-toolbar-title class="card__header__text">KOLLOX</v-toolbar-title>
-
+      <v-btn
+      icon
+      >
+        <v-icon>mdi-home</v-icon>
+      </v-btn>
       <v-spacer></v-spacer>
 
       <v-btn

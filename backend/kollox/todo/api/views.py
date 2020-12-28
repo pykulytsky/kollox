@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from authentication.permissions import UserHasJWTToken, EmailVerified, EmailNotVerified
+from ..permissions import ListOwnerPermission
 from ..models import SimpleToDoList, Project, BaseToDoList
 from ..api.serializers import *
 from authentication.models import User
@@ -118,7 +119,7 @@ class ProjectListAPIView(generics.ListCreateAPIView):
 
 
 class SimpleToDoListDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, ListOwnerPermission)
     serializer_class = SimpleToDoListDetailSerializer
     lookup_url_kwarg = 'id'
     queryset = SimpleToDoList.objects.all()
@@ -126,7 +127,7 @@ class SimpleToDoListDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, ListOwnerPermission)
     serializer_class = ProjectDetailSerializer
     lookup_url_kwarg = 'id'
     queryset = Project.objects.all()

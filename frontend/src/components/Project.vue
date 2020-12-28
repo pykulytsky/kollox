@@ -15,12 +15,13 @@
     <v-layout align-center justify-center>
       <v-flex
           xs12 sm8 md8>
-        <v-card
-            elevation="16"
-            :loading="loading"
-            class="d-flex flex-column main-card justify-space-between"
+<!--        <v-card-->
+<!--            elevation="16"-->
+<!--            :loading="loading"-->
+<!--            class="d-flex flex-column main-card justify-space-between"-->
 
-        >
+<!--        >-->
+        <div class="main">
           <v-img
               class="header__image"
               :src="todoList.cover"
@@ -94,9 +95,20 @@
 
           </div>
 
+          <v-btn
+              v-if="addNewTodo == false"
+              @click="addNewTodo = true"
+          outlined
+          >
+          <v-icon>
+            mdi-plus
+          </v-icon>
+            Add new todo
+          </v-btn>
 
 <!--          NEW TODO-->
-          <div class="new__todo">
+          <div
+              class="new__todo">
             <v-text-field
                 @keydown.enter="addTodo"
                 v-model="newTodo"
@@ -136,7 +148,9 @@
                   </v-icon>
                 </v-btn>
               </template>
-              <div class="date__time">
+              <div
+                  v-click-outside="clearDate"
+                  class="date__time">
                 <v-date-picker
                     v-model="date"
                     v-if="!chooseTime"
@@ -187,7 +201,9 @@
             </v-menu>
 
             <v-btn
+                outlined
                 icon
+                :disabled="newTodo.length === 0"
                 @click="addTodo"
             >
               <v-icon>
@@ -195,6 +211,7 @@
               </v-icon>
             </v-btn>
           </div>
+
           <div
 
               class="todo__item"
@@ -466,7 +483,8 @@
           <!--            ></v-checkbox>-->
           <!--            Lorem ipsum dolor sit.-->
           <!--          </div>-->
-        </v-card>
+<!--        </v-card>-->
+        </div>
       </v-flex>
     </v-layout>
 
@@ -792,6 +810,7 @@ export default {
       tempDate: null,
       time: '00:00',
 
+      addNewTodo: false
 
     }
   },
@@ -1058,7 +1077,12 @@ export default {
       this.$store.dispatch('setLoading', false)
     },
 
+    clearDate () {
+      this.isDateUsing = false
+      this.date = null
+      this.time = null
 
+    },
 
     addToFavorite (todo_id) {
       const url = 'http://127.0.0.1:8000/api/todo/todo/' + todo_id + '/'
@@ -1387,5 +1411,9 @@ p {
   top: 10%;
   margin-right: 5px;
   margin-top: 5px;
+}
+
+.main {
+
 }
 </style>
