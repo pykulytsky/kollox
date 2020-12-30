@@ -14,7 +14,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'username', 'password', 'token',)
+        fields = ('id',
+                  'email',
+                  'username',
+                  'password',
+                  'token',)
 
     def create(self, validated_data) -> User:
         return User.objects.create_user(**validated_data)
@@ -61,7 +65,15 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'age', "is_superuser", 'email_verified', 'avatar')
+        fields = ('username',
+                  'email',
+                  'first_name',
+                  'last_name',
+                  'age',
+                  "is_superuser",
+                  'email_verified',
+                  'avatar',
+                  'avatar_url')
 
     def get_avatar(self, user):
         request = self.context.get('request')

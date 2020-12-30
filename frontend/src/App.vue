@@ -46,7 +46,9 @@
         </v-list-item>
       </v-list>
 
-      <v-divider></v-divider>
+      <v-divider
+        v-if="user"
+      ></v-divider>
       <v-list>
 
         <v-list-item
@@ -82,6 +84,7 @@
       ></v-app-bar-nav-icon>
 
       <v-btn
+          v-if="user"
       icon
       >
         <v-icon>mdi-home</v-icon>
@@ -101,6 +104,7 @@
 
       <template v-slot:activator="{on, attrs}">
           <v-btn
+              v-if="user"
               v-bind="attrs"
               v-on="on"
               icon>

@@ -61,6 +61,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     avatar = models.ImageField(upload_to="assets/avatars/",
                                default="noimage.png")
+
+    avatar_url = models.URLField(blank=True, null=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 

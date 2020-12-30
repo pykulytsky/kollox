@@ -64,6 +64,20 @@ export default {
             commit('clearAuth')
         },
 
+        async logInViaGoogle({commit, getters}, payload) {
+            // TODO DONT WORKK FUCKING PYTHUHON
+            await axios.post('http://localhost:8000/api/auth/google/',
+                {
+                    access_token: payload
+                })
+                .then(response => {
+
+                })
+                .catch(error => {
+
+                })
+        },
+
         async loadUser({commit}) {
             commit('setLoading', true)
             commit('clearError')
@@ -103,7 +117,8 @@ export default {
 
             await axios.post('http://localhost:8000/api/auth/register/', payload)
                 .then(response => {
-                    if (response.status == 200) {
+                    console.log(response)
+                    if (response.status == 201) {
                         commit('setAuth', new Auth(response.data.token))
                         console.log("Response: ",response)
                         console.log("success")
@@ -112,9 +127,9 @@ export default {
                     }
                     else {
                         console.log("Error Response: ",response)
-                        commit('setError', "Wrong login credentials")
+                        commit('setError', "Wrong register credentials")
                         commit('setLoading', false)
-                        throw error("Wrong login credentials")
+                        throw error("Wrong REGISTRATION credentials")
                     }
                 })
                 .catch(error => {

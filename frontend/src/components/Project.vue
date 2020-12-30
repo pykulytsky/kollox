@@ -21,7 +21,8 @@
 <!--            class="d-flex flex-column main-card justify-space-between"-->
 
 <!--        >-->
-        <div class="main">
+        <div
+            class="main">
           <v-img
               class="header__image"
               :src="todoList.cover"
@@ -92,22 +93,23 @@
 
               </v-list>
             </v-menu>
-
           </div>
 
           <v-btn
+              icon
               v-if="addNewTodo == false"
               @click="addNewTodo = true"
-          outlined
           >
-          <v-icon>
+          <v-icon
+            large
+          >
             mdi-plus
           </v-icon>
-            Add new todo
           </v-btn>
 
 <!--          NEW TODO-->
           <div
+              v-if="addNewTodo == true"
               class="new__todo">
             <v-text-field
                 @keydown.enter="addTodo"
@@ -201,12 +203,13 @@
             </v-menu>
 
             <v-btn
-                outlined
                 icon
                 :disabled="newTodo.length === 0"
                 @click="addTodo"
             >
-              <v-icon>
+              <v-icon
+                large
+              >
                 mdi-plus
               </v-icon>
             </v-btn>
@@ -1166,6 +1169,8 @@ export default {
                 headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
               };
 
+              self.addNewTodo = false
+
               axios.get(url, config)
                   .then(response => {
                     this.todoList.id = response.data.id
@@ -1332,8 +1337,6 @@ export default {
   font-family: 'Proxima Nova Semibold', sans-serif;
 }
 
-
-
 .card__header__text {
   font-family: 'Andika New Basic', sans-serif;
 }
@@ -1414,6 +1417,5 @@ p {
 }
 
 .main {
-
 }
 </style>

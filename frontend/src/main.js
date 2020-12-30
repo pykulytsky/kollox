@@ -8,7 +8,7 @@ import VueSelectImage from 'vue-select-image'
 import titleMixin from "@/mixins/titleMixin";
 import DatetimePicker from 'vuetify-datetime-picker'
 import Notifications from 'vue-notification'
-
+import GSignInButton from 'vue-google-signin-button'
 
 
 require('vue-select-image/dist/vue-select-image.css')
@@ -19,6 +19,7 @@ Vue.use(VueSelectImage)
 Vue.mixin(titleMixin)
 Vue.use(DatetimePicker)
 Vue.use(Notifications)
+Vue.use(GSignInButton)
 
 new Vue({
     router,

@@ -7,59 +7,64 @@
       v-for="list in todoLists"
       :v-key = "list.id"
       class="col-md-4">
-    <v-card
-        link
-        :to="list.todo_list_type == 'project' ? '/project/' + list.data.id : '/simple-todo-list/' +
-        list.data.id"
-        class="mx-auto"
-        max-width="344"
-    >
-      <v-img
-          v-if="list.data.cover"
-          :src="list.data.cover"
-          height="200px"
-      ></v-img>
+    <v-hover>
+      <template v-slot:default="{ hover }">
+        <v-card
+            link
+            :elevation="hover ? 10 : 3"
+            :to="list.todo_list_type == 'project' ? '/project/' + list.data.id : '/simple-todo-list/' +
+            list.data.id"
+            class="mx-auto"
+            max-width="344"
+        >
+          <v-img
+              v-if="list.data.cover"
+              :src="list.data.cover"
+              height="200px"
+          ></v-img>
 
-      <v-card-title>
-        {{ list.data.name }}
-      </v-card-title>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <small> {{ list.data.total_completed_tasks }} of {{ list.data.total_tasks }}</small>
-      </v-card-actions>
+          <v-card-title>
+            {{ list.data.name }}
+          </v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <small> {{ list.data.total_completed_tasks }} of {{ list.data.total_tasks }}</small>
+          </v-card-actions>
 
-<!--      <v-card-subtitle>-->
-<!--        {{ list.data.id }}-->
-<!--      </v-card-subtitle>-->
+    <!--      <v-card-subtitle>-->
+    <!--        {{ list.data.id }}-->
+    <!--      </v-card-subtitle>-->
 
-  <!--      <v-card-actions>-->
-  <!--        <v-btn-->
-  <!--            color="orange lighten-2"-->
-  <!--            text-->
-  <!--        >-->
-  <!--          Explore-->
-  <!--        </v-btn>-->
+      <!--      <v-card-actions>-->
+      <!--        <v-btn-->
+      <!--            color="orange lighten-2"-->
+      <!--            text-->
+      <!--        >-->
+      <!--          Explore-->
+      <!--        </v-btn>-->
 
-  <!--        <v-spacer></v-spacer>-->
+      <!--        <v-spacer></v-spacer>-->
 
-  <!--&lt;!&ndash;        <v-btn&ndash;&gt;-->
-  <!--&lt;!&ndash;            icon&ndash;&gt;-->
-  <!--&lt;!&ndash;            @click="show = !show"&ndash;&gt;-->
-  <!--&lt;!&ndash;        >&ndash;&gt;-->
-  <!--&lt;!&ndash;          <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>&ndash;&gt;-->
-  <!--&lt;!&ndash;        </v-btn>&ndash;&gt;-->
-  <!--      </v-card-actions>-->
+      <!--&lt;!&ndash;        <v-btn&ndash;&gt;-->
+      <!--&lt;!&ndash;            icon&ndash;&gt;-->
+      <!--&lt;!&ndash;            @click="show = !show"&ndash;&gt;-->
+      <!--&lt;!&ndash;        >&ndash;&gt;-->
+      <!--&lt;!&ndash;          <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>&ndash;&gt;-->
+      <!--&lt;!&ndash;        </v-btn>&ndash;&gt;-->
+      <!--      </v-card-actions>-->
 
-<!--      <v-expand-transition>-->
-<!--        <div v-show="show">-->
-<!--          <v-divider></v-divider>-->
+    <!--      <v-expand-transition>-->
+    <!--        <div v-show="show">-->
+    <!--          <v-divider></v-divider>-->
 
-<!--          <v-card-text>-->
-<!--            I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.-->
-<!--          </v-card-text>-->
-<!--        </div>-->
-<!--      </v-expand-transition>-->
-    </v-card>
+    <!--          <v-card-text>-->
+    <!--            I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.-->
+    <!--          </v-card-text>-->
+    <!--        </div>-->
+    <!--      </v-expand-transition>-->
+        </v-card>
+      </template>
+    </v-hover>
   </div>
   </v-row>
   <v-progress-circular
@@ -259,4 +264,5 @@ export  default {
   margin-bottom: 10px;
   margin-right: 10px;
 }
+
 </style>

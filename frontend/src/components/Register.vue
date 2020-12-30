@@ -66,7 +66,7 @@
 <script>
 const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
 export default {
-
+  title: 'Registration',
   data: () => {
     return {
       valid: false,
