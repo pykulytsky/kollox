@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import generics
 
 from authentication.models import User
 from authentication.api.serializers import \
@@ -12,7 +13,7 @@ from authentication.api.serializers import \
      UserSerializer,
      UserDetailSerializer)
 
-from rest_framework import generics
+
 
 
 class RegistrationAPIView(APIView):
@@ -53,9 +54,11 @@ class UserListAPI(generics.ListAPIView):
     queryset = User.objects.all()
 
 
-class UserAPIView(APIView):
+class UserAPIView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, )
     serializer_class = UserDetailSerializer
+    lookup_url_kwarg = 'id'
+    queryset = User.objects.all()
 
     def get(self, request, id):
         _user = User.objects.get(id=id)
@@ -64,8 +67,6 @@ class UserAPIView(APIView):
         return Response(serializer.data,
                         status=status.HTTP_200_OK)
 
-    def patch(self, request, id):
-        _user = User.objects.get(id=id)
 
 
 @api_view(['POST'])

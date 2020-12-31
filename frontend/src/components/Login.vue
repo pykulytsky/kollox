@@ -11,15 +11,6 @@
       validation
       >
         <v-text-field
-            prepend-icon="mdi-account"
-            v-model="username"
-            class="login__field field"
-            hint="This field uses counter prop"
-            label="Username"
-
-            :rules="rules"
-        ></v-text-field>
-        <v-text-field
             class="field"
             prepend-icon="mdi-email"
             v-model="email"
@@ -95,7 +86,6 @@ export default {
       },
 
       valid: false,
-      username: '',
       email: '',
       password: '',
       maxLetters: 32,
@@ -133,7 +123,6 @@ export default {
 
       if (this.$refs.form.validate() ) {
         const user = {
-          username: this.username,
           email: this.email,
           password: this.password
         }
@@ -199,7 +188,7 @@ export default {
   margin: 50px 50px 50px 50px;
 }
 
-.login__field {
+.field {
   width: 350px;
 }
 

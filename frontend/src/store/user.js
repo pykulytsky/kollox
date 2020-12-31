@@ -87,9 +87,8 @@ export default {
                     headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
                 })
                     .then(response => {
-                        console.log("load user",response.data)
                         commit('setUser', new User(
-                            response.data['pk'],
+                            response.data['id'],
                             response.data['username'],
                             response.data['email'],
                             response.data['first_name'],
@@ -117,7 +116,7 @@ export default {
 
             await axios.post('http://localhost:8000/api/auth/register/', payload)
                 .then(response => {
-                    console.log(response)
+                    console.log(response.status)
                     if (response.status == 201) {
                         commit('setAuth', new Auth(response.data.token))
                         console.log("Response: ",response)

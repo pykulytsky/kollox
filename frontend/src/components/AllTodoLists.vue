@@ -1,7 +1,7 @@
 <template>
 <v-container>
   <v-row
-  v-if="!loading"
+  v-if="!loading && todoLists.length !== 0"
   >
   <div
       v-for="list in todoLists"
@@ -67,6 +67,21 @@
     </v-hover>
   </div>
   </v-row>
+  <div
+      v-if="todoLists.length == 0"
+      class="no__todo_png">
+      <v-img
+          class="no_todo"
+          width="450px"
+          height="450px"
+        src="../assets/kisspng-computer-icons-action-item-share-icon-5b382cee0fab25.5919305715304081740642.png"
+      >
+      </v-img>
+      <h3
+      class="no_todo_text"
+      >Here is no todo lists, try to add one by clicking the '+' button!</h3>
+  </div>
+
   <v-progress-circular
       v-else
   indeterminate
@@ -236,6 +251,8 @@ export  default {
 
       this.$store.dispatch('loadAllTodoLists')
       this.dialog = false
+
+
     }
   },
   
@@ -265,4 +282,15 @@ export  default {
   margin-right: 10px;
 }
 
+.no__todo_png {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.no_todo_text {
+  margin-top: 20px;
+  color: #353535;
+}
 </style>

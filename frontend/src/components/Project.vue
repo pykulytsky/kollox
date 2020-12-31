@@ -21,8 +21,12 @@
 <!--            class="d-flex flex-column main-card justify-space-between"-->
 
 <!--        >-->
-        <div
-            class="main">
+        <v-card
+            elevation="16"
+            :loading="loading"
+            class="d-flex flex-column main-card justify-space-around"
+
+        >
           <v-img
               class="header__image"
               :src="todoList.cover"
@@ -101,7 +105,7 @@
               @click="addNewTodo = true"
           >
           <v-icon
-            large
+            small
           >
             mdi-plus
           </v-icon>
@@ -109,7 +113,7 @@
 
 <!--          NEW TODO-->
           <div
-              v-if="addNewTodo == true"
+              v-if="addNewTodo == true && isNewTodoUsing == false"
               class="new__todo">
             <v-text-field
                 @keydown.enter="addTodo"
@@ -208,77 +212,81 @@
                 @click="addTodo"
             >
               <v-icon
-                large
               >
-                mdi-plus
+                mdi-check
               </v-icon>
             </v-btn>
           </div>
 
-          <div
+<!--          <v-hover>-->
+<!--            <template v-slot:default="{ hover }">-->
+              <div
+                  :elevation="hover ? 10 : 3"
+                  class="todo__item"
+                  v-if="todoList.tasks"
+                  v-for="todo in todoList.tasks"
+                  :key="todo.id"
+              >
+                <v-checkbox
+                    ref="check"
+                    color="indigo darken-3"
+                    class="rounded-bl-circle"
+                    v-model="todo.is_completed"
+                    @click="completeTask(todo.id)"
+                    hide-details
+                ></v-checkbox>
 
-              class="todo__item"
-              v-if="todoList.tasks"
-              v-for="todo in todoList.tasks"
-              :key="todo.id"
-          >
-            <v-checkbox
-                ref="check"
-                color="indigo darken-3"
-                class="item__checkbox round"
-                v-model="todo.is_completed"
-                @click="completeTask(todo.id)"
-                hide-details
-            ></v-checkbox>
+                <p
+                  :class="{'completed-task': todo.is_completed}"
+                  @click="onPClick"
+                >{{ todo.title }}</p>
 
-            <p
-              :class="{'completed-task': todo.is_completed}"
-              @click="onPClick"
-            >{{ todo.title }}</p>
+                <small
+                :class="{'date__info': true, 'red--text': todo.expired_time < todayDate, 'green--text':
+                todo.expired_time > todayDate}"
+                v-if="todo.expired_time"
+                >
+                  <v-icon
+                  small
+                >
+                    mdi-calendar
+                  </v-icon>
+                  {{new Date(todo.expired_time).toDateString()}}
+                </small>
+                <v-spacer></v-spacer>
+                <v-btn
+                    icon
+                    @click="showTodoDetail(todo.id)"
+                >
+                  <v-icon>mdi-dots-vertical</v-icon>
+                  <p
+                  ></p>
+                </v-btn>
+                <v-btn
+                    @click="addToFavorite(todo.id)"
+                    icon
+                    color="indigo"
 
-            <small
-            :class="{'date__info': true, 'red--text': todo.expired_time < todayDate, 'green--text':
-            todo.expired_time > todayDate}"
-            v-if="todo.expired_time"
-            >
-              <v-icon
-              small
-            >
-                mdi-calendar
-              </v-icon>
-              {{new Date(todo.expired_time).toDateString()}}
-            </small>
-            <v-spacer></v-spacer>
-            <v-btn
-                icon
-                @click="showTodoDetail(todo.id)"
-            >
-              <v-icon>mdi-dots-vertical</v-icon>
-              <p
-              ></p>
-            </v-btn>
-            <v-btn
-                @click="addToFavorite(todo.id)"
-                icon
-                color="indigo"
+                >
+                  <v-icon
+                  v-if="todo.is_favorite"
+                  >mdi-star</v-icon>
 
-            >
-              <v-icon
-              v-if="todo.is_favorite"
-              >mdi-star</v-icon>
+                  <v-icon
+                  v-else
+                  >mdi-star-outline</v-icon>
+                </v-btn>
+                <div
+                    v-if="todo.detail"
+                    class="todo__detail">
+                  <p>Lorem ipsum dolor.</p>
+                  <p>Lorem ipsum.</p>
+                  <p>Lorem ipsum dolor sit.</p>
+                </div>
+              </div>
+<!--            </template>-->
+<!--          </v-hover>-->
 
-              <v-icon
-              v-else
-              >mdi-star-outline</v-icon>
-            </v-btn>
-            <div
-                v-if="todo.detail"
-                class="todo__detail">
-              <p>Lorem ipsum dolor.</p>
-              <p>Lorem ipsum.</p>
-              <p>Lorem ipsum dolor sit.</p>
-            </div>
-          </div>
           <div
               v-else
               class="badge__centered">
@@ -487,7 +495,7 @@
           <!--            Lorem ipsum dolor sit.-->
           <!--          </div>-->
 <!--        </v-card>-->
-        </div>
+          </v-card>
       </v-flex>
     </v-layout>
 
@@ -749,6 +757,8 @@ export default {
       todoType: 10,
 
       shareDialog: false,
+
+      isNewTodoUsing: false,
 
       covers: [
         {
@@ -1169,7 +1179,8 @@ export default {
                 headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
               };
 
-              self.addNewTodo = false
+              this.addNewTodo = false
+              this.isNewTodoUsing = true
 
               axios.get(url, config)
                   .then(response => {
@@ -1350,6 +1361,59 @@ export default {
 
 }
 
+.custom__checkbox {
+  z-index: 0;
+  position: absolute;
+  opacity: 0;
+}
+
+.custom__checkbox+label {
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+}
+.custom__checkbox+label::before {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  flex-grow: 0;
+  border: 1px solid #adb5bd;
+  border-radius: 50%;
+  margin-right: 0.5em;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 50% 50%;
+}
+
+.custom-checkbox:checked+label::before {
+  border-color: #0b76ef;
+  background-color: #0b76ef;
+}
+
+/* стили при наведении курсора на checkbox */
+.custom-checkbox:not(:disabled):not(:checked)+label:hover::before {
+  border-color: #b3d7ff;
+}
+/* стили для активного состояния чекбокса (при нажатии на него) */
+.custom-checkbox:not(:disabled):active+label::before {
+  background-color: #b3d7ff;
+  border-color: #b3d7ff;
+}
+/* стили для чекбокса, находящегося в фокусе */
+.custom-checkbox:focus+label::before {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+/* стили для чекбокса, находящегося в фокусе и не находящегося в состоянии checked */
+.custom-checkbox:focus:not(:checked)+label::before {
+  border-color: #80bdff;
+}
+/* стили для чекбокса, находящегося в состоянии disabled */
+.custom-checkbox:disabled+label::before {
+  background-color: #e9ecef;
+}
+
 .todo__item {
   border-radius: 25px;
   margin: 5px 10px;
@@ -1372,6 +1436,7 @@ export default {
 .item__checkbox {
   margin: 0;
   padding: 0;
+  border-radius: 50%;
 
 }
 p {

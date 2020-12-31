@@ -11,18 +11,57 @@
         >
 
         </v-img>
+        <h2
+          v-if="user.firstName && user.lastName"
+        >{{ user.firstName }}  {{ user.lastName }}</h2>
 
-        <h2>{{ user.firstName }}  {{ user.lastName }}</h2>
+        <h2
+          v-else
+        >{{ user.username }}</h2>
       </div>
-    </v-img>
-    <v-container>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi cum fugiat in itaque labore minima minus officiis reiciendis sequi veniam.</p>
 
-    </v-container>
+      <input
+          name="avatarUpload"
+          type="file"
+          ref="avatarUpload"
+          id="avatarUpload"
+          class="avatar__upload"
+          @change="onFileChange"
+          accept="image/*"
+      >
+
+      <v-btn
+          icon
+          @click="uploadAvatar"
+          class="avatar__upload__btn"
+      >
+        <v-icon>
+          mdi-image-edit
+        </v-icon>
+      </v-btn>
+
+
+      <v-btn
+        icon
+        class="edit__btn"
+      >
+        <v-icon>
+          mdi-lead-pencil
+        </v-icon>
+      </v-btn>
+    </v-img>
+    <div class="profile__main">
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Placeat, rem!</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, <repellendus class=""></repellendus></p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima, suscipit!</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque, harum?</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga, tempore?</p>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 
 export default {
   title: 'Profile',
@@ -35,6 +74,11 @@ export default {
   beforeCreate() {
     this.$store.dispatch('loadUser')
   },
+
+  updated() {
+    console.log(this.user.id)
+
+  },
   computed: {
     loading () {
       return this.$store.getters.loading
@@ -43,7 +87,50 @@ export default {
     user () {
       return this.$store.getters.user
     }
-  }
+  },
+
+  methods: {
+    uploadAvatar () {
+      this.$refs.avatarUpload.click()
+    },
+
+
+    async onFileChange (event) {
+      const file = event.target.files[0]
+
+      const reader = new FileReader()
+      var imageSrc = null
+      var image = null
+
+      reader.onload = e => {
+        imageSrc = reader.result
+      }
+      reader.readAsDataURL(file)
+      image = file
+
+      var formData = new FormData();
+      formData.append('avatar', image)
+
+      await axios.patch('http://localhost:8000/api/auth/user/' + this.user.id + '/', formData, {
+        headers: {Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}`}
+      })
+      .then(response => {
+        this.$notify({
+          group: 'main',
+          type: 'info',
+          title: "You have successfully changed your avatar"
+        })
+      })
+      .catch(error => {
+        this.$notify({
+          group: 'main',
+          type: 'error',
+          title: "Some problems occured when changed your avatar"
+        })
+      })
+    }
+  },
+
 }
 </script>
 
@@ -51,6 +138,12 @@ export default {
 
 .data__item p {
   font-size: 20px;
+}
+
+.edit__btn {
+  position: absolute;
+  bottom: 5%;
+  right: 2%;
 }
 
 .data__item h2 {
@@ -77,6 +170,28 @@ export default {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+}
+
+.profile__main {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar__upload {
+  display: none;
+
+  /*position: absolute;*/
+  /*z-index: -1;*/
+  /*opacity: 0;*/
+}
+
+.avatar__upload__btn {
+  position: absolute;
+  top: 55%;
+  left: 53%;
 }
 
 </style>
