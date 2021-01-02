@@ -257,8 +257,9 @@ class FavoriteToDoItemListView(generics.ListAPIView):
                 queryset = ToDoItem.objects.filter(
                     todo_list_id=request.data['list_id'],
                     todo_list_type=request.data['list_type'],
-                    project__owner=_user,
                     is_favorite=True
+                ).filter(
+                    Q(project__owner=_user) | Q(project__shared_owners=_user)
                 )
             else:
                 queryset = ToDoItem.objects.filter(
@@ -266,17 +267,22 @@ class FavoriteToDoItemListView(generics.ListAPIView):
                     todo_list_type=request.data['list_type'],
                     simple_todo_list__owner=_user,
                     is_favorite=True
+                ).filter(
+                    Q(simple_todo_list__owner=_user) | Q(simple_todo_list__shared_owners=_user)
                 )
         else:
             try:
                 queryset = ToDoItem.objects.filter(
                     is_favorite=True,
-                    project__owner=_user
+
+                ).filter(
+                    Q(project__owner=_user) | Q(project__shared_owners=_user)
                 )
             except:
                 queryset = ToDoItem.objects.filter(
                     is_favorite=True,
-                    simple_todo_list__owner=_user
+                ).filter(
+                    Q(simple_todo_list__owner=_user) | Q(simple_todo_list__shared_owners=_user)
                 )
         return queryset
 

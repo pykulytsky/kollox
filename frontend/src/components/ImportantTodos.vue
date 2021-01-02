@@ -339,6 +339,7 @@ export default {
 
     axios.get(url, config)
         .then(response => {
+          console.log(response.data)
           this.tasks = response.data
         })
         .catch(error => {

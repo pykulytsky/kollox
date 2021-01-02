@@ -23,7 +23,7 @@ const routes = [
   {
     path: '/simple-todo-list/:id',
     component: TodoList,
-    name: 'todo-list',
+    name: 'simple-todo-list',
     beforeEnter(to, from, next) {
       if (JSON.parse(localStorage.getItem('auth'))['token']) {
         store.dispatch('loadUser')
@@ -38,7 +38,7 @@ const routes = [
   {
     path: '/project/:id',
     component: Project,
-    name: 'projects',
+    name: 'project',
     beforeEnter(to, from, next) {
       if (JSON.parse(localStorage.getItem('auth'))['token']) {
         store.dispatch('loadUser')

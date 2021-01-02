@@ -220,12 +220,15 @@
 
 <!--          <v-hover>-->
 <!--            <template v-slot:default="{ hover }">-->
+          <transition
+              v-for="todo in todoList.tasks"
+              :key="todo.id"
+              v-if="todoList.tasks"
+              name="fade">
               <div
                   :elevation="hover ? 10 : 3"
                   class="todo__item"
-                  v-if="todoList.tasks"
-                  v-for="todo in todoList.tasks"
-                  :key="todo.id"
+
               >
                 <v-checkbox
                     ref="check"
@@ -284,9 +287,9 @@
                   <p>Lorem ipsum dolor sit.</p>
                 </div>
               </div>
+          </transition>
 <!--            </template>-->
 <!--          </v-hover>-->
-
           <div
               v-else
               class="badge__centered">
@@ -830,7 +833,7 @@ export default {
   computed: {
 
     heart () {
-      if (this.isListFavorite) {
+      if (this.todoList.favorite) {
         return  this.heartIcon
       }
       else {
@@ -1156,6 +1159,27 @@ export default {
       this.todoList.tasks[index].detail = true
     },
 
+    addListToFavorite () {
+      const url = 'http://localhost:8000/api/todo/project/' + this.todoList.id + '/'
+      const config = {
+        headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+      };
+
+      axios.patch(url, {
+        favorite: !this.todoList.favorite
+      },
+      config)
+      .then(response => {
+        // TODO notify
+        this.todoList.favorite = !this.todoList.favorite
+        this.$emit('updateHeart', this.heart)
+      })
+      .catch(error => {
+
+      })
+
+    },
+
     addTodo () {
       const url = 'http://127.0.0.1:8000/api/todo/todos/'
       const config = {
@@ -1416,12 +1440,10 @@ export default {
 
 .todo__item {
   border-radius: 25px;
-  margin: 5px 10px;
   display: flex;
   justify-content: flex-start;
   align-items: baseline;
   background-color: #121212;
-  padding-bottom: 0px;
 }
 
 .todo__item:hover {
@@ -1482,5 +1504,13 @@ p {
 }
 
 .main {
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+  opacity: 0;
+  transition: opacity .5s;
 }
 </style>

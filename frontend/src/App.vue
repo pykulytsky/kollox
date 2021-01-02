@@ -93,7 +93,7 @@
 
       <v-btn
           v-if="isDetailPageRoute"
-          @click="isListFavorite = !isListFavorite"
+          @click="addListToFavorite"
           icon>
         <v-icon>{{heart}}</v-icon>
       </v-btn>
@@ -149,9 +149,12 @@
       </v-menu>
     </v-app-bar>
     <v-main>
-      <router-view>
-
-      </router-view>
+      <transition name="fade">
+        <router-view
+          @updateHeart="updateHeart(heart)"
+        >
+        </router-view>
+      </transition>
     </v-main>
     <notifications group="main" position="bottom right"/>
     <notifications position="top center" group="loginError"/>
@@ -160,6 +163,7 @@
 
 <script>
 import Navbar from "@/components/core/Navbar";
+import axios from "axios";
 
 export default {
   name: 'App',
@@ -313,6 +317,55 @@ export default {
     }
   },
   methods: {
+    // updateHeart (heart) {
+    //   console.log(heart)
+    // },
+
+    addListToFavorite () {
+      const listId = this.$route.params['id']
+      const listType = this.$route.name
+      const isListFavorite = this.$route.query['favorite']
+
+      if (listType == 'project') {
+      const url = 'http://localhost:8000/api/todo/project/' + listId + '/'
+      const config = {
+        headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+      };
+
+      axios.patch(url, {
+            favorite: !isListFavorite
+          },
+          config)
+          .then(response => {
+            // TODO notify
+            this.todoList.favorite = !this.todoList.favorite
+            this.$emit('updateHeart', this.heart)
+          })
+          .catch(error => {
+
+          })
+      }
+      else if (listType == 'simple-todo-list') {
+        const url = 'http://localhost:8000/api/todo/simple-todo-list/' + listId + '/'
+        const config = {
+          headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+        };
+
+        axios.patch(url, {
+              favorite: !isListFavorite
+            },
+            config)
+            .then(response => {
+              // TODO notify
+              this.todoList.favorite = !this.todoList.favorite
+              this.$emit('updateHeart', this.heart)
+            })
+            .catch(error => {
+
+            })
+      }
+    },
+
     search () {
       this.searchMenu = false
       this.$router.push('/search?s=' + this.searchParams)

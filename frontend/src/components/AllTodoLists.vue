@@ -12,8 +12,11 @@
         <v-card
             link
             :elevation="hover ? 10 : 3"
-            :to="list.todo_list_type == 'project' ? '/project/' + list.data.id : '/simple-todo-list/' +
-            list.data.id"
+            :to="list.todo_list_type == 'project' ? '/project/' + list.data.id + '/?favorite=' +
+            list.data.favorite :
+            '/simple-todo-list/' +
+            list.data.id + '/?favorite=' +
+            list.data.favorite"
             class="mx-auto"
             max-width="344"
         >
@@ -82,11 +85,7 @@
       >Here is no todo lists, try to add one by clicking the '+' button!</h3>
   </div>
 
-  <v-progress-circular
-      v-else
-  indeterminate
-  color="primary"
-  ></v-progress-circular>
+
   <v-btn
       class="float__btn grey darken-4"
       fixed
@@ -212,10 +211,10 @@ export  default {
     },
     linkToList (list) {
       if (list.todo_list_type == 'simpletodolist') {
-        return '/simple-todo-list/' + list.id
+        return '/simple-todo-list/' + list.id + '/?favorite=' + list.id
       }
       else if  (list.todo_list_type == 'project'){
-        return '/project/' + list.id
+        return '/project/' + list.id + '/?favorite=' + list.id
       }
       else {
         this.$store.dispatch('setError', "Wrong way.")
