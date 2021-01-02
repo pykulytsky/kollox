@@ -366,8 +366,6 @@ export default {
 
 }
 
-
-
 .todo__item {
   border-radius: 5px;
   margin: 5px 10px;

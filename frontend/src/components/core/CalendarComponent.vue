@@ -232,7 +232,6 @@ export default {
       //     timed: !allDay,
       //   })
       // }
-      console.log(events)
       this.events = events
     },
     rnd (a, b) {

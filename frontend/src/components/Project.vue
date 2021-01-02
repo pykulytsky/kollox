@@ -27,6 +27,7 @@
             class="d-flex flex-column main-card justify-space-around"
 
         >
+          <transition name="fade">
           <v-img
               class="header__image"
               :src="todoList.cover"
@@ -35,6 +36,7 @@
           >
 
           </v-img>
+          </transition>
           <div class="card__header1">
             <h2 class="card__header__text">{{ todoList.name }}</h2>
 
@@ -112,120 +114,125 @@
           </v-btn>
 
 <!--          NEW TODO-->
-          <div
-              v-if="addNewTodo == true && isNewTodoUsing == false"
-              class="new__todo">
-            <v-text-field
-                @keydown.enter="addTodo"
-                v-model="newTodo"
-                class="add__todo"
-            label="Add new todo"
-            >
-            </v-text-field>
-<!--            <v-btn-->
-<!--                v-if="!datePicker"-->
-<!--              icon-->
-<!--              >-->
-<!--              <v-icon>-->
-<!--                mdi-calendar-->
-<!--              </v-icon>-->
-<!--            </v-btn>-->
-
-            <v-menu
-                ref="menu"
-                v-model="menu"
-                :close-on-content-click="false"
-                :return-value.sync="date"
-                transition="scale-transition"
-                offset-y
-                min-width="290px"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                    v-bind="attrs"
-                    v-on="on"
-                    v-if="!datePicker"
-
-                    icon
-                >
-                  <v-icon
-                  >
-                    mdi-calendar
-                  </v-icon>
-                </v-btn>
-              </template>
-              <div
-                  v-click-outside="clearDate"
-                  class="date__time">
-                <v-date-picker
-                    v-model="date"
-                    v-if="!chooseTime"
-                    no-title
-                    color="deep-purple"
-                    scrollable
-                    :min="todayDate"
-                >
-                  <v-spacer></v-spacer>
-                  <v-btn
-                      text
-                      color="primary"
-                      @click="menu = false"
-                  >
-                    Cancel
-                  </v-btn>
-                  <v-btn
-                      text
-                      color="primary"
-                      @click="saveDate(date)"
-                  >
-                    OK
-                  </v-btn>
-                </v-date-picker>
-                <v-time-picker
-                    format="24hr"
-                    v-model="time"
-                    v-else
-                >
-                  <v-spacer></v-spacer>
-                  <v-btn
-                      text
-                      color="primary"
-                      @click="closeDateTime"
-                  >
-                    Cancel
-                  </v-btn>
-                  <v-btn
-                      text
-                      color="primary"
-                      @click="saveDateTime(time)"
-                  >
-                    OK
-                  </v-btn>
-
-                </v-time-picker>
-              </div>
-            </v-menu>
-
-            <v-btn
-                icon
-                :disabled="newTodo.length === 0"
-                @click="addTodo"
-            >
-              <v-icon
+          <transition
+            name="slide"
+          >
+            <div
+                v-if="addNewTodo == true"
+                class="new__todo">
+              <v-text-field
+                  @keydown.enter="addTodo"
+                  v-model="newTodo"
+                  class="add__todo"
+              label="Add new todo"
               >
-                mdi-check
-              </v-icon>
-            </v-btn>
-          </div>
+              </v-text-field>
+  <!--            <v-btn-->
+  <!--                v-if="!datePicker"-->
+  <!--              icon-->
+  <!--              >-->
+  <!--              <v-icon>-->
+  <!--                mdi-calendar-->
+  <!--              </v-icon>-->
+  <!--            </v-btn>-->
+
+              <v-menu
+                  ref="menu"
+                  v-model="menu"
+                  :close-on-content-click="false"
+                  :return-value.sync="date"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                      v-bind="attrs"
+                      v-on="on"
+                      v-if="!datePicker"
+
+                      icon
+                  >
+                    <v-icon
+                    >
+                      mdi-calendar
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <div
+                    v-click-outside="clearDate"
+                    class="date__time">
+                  <v-date-picker
+                      v-model="date"
+                      v-if="!chooseTime"
+                      no-title
+                      color="deep-purple"
+                      scrollable
+                      :min="todayDate"
+                  >
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        text
+                        color="primary"
+                        @click="menu = false"
+                    >
+                      Cancel
+                    </v-btn>
+                    <v-btn
+                        text
+                        color="primary"
+                        @click="saveDate(date)"
+                    >
+                      OK
+                    </v-btn>
+                  </v-date-picker>
+                  <v-time-picker
+                      format="24hr"
+                      v-model="time"
+                      v-else
+                  >
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        text
+                        color="primary"
+                        @click="closeDateTime"
+                    >
+                      Cancel
+                    </v-btn>
+                    <v-btn
+                        text
+                        color="primary"
+                        @click="saveDateTime(time)"
+                    >
+                      OK
+                    </v-btn>
+
+                  </v-time-picker>
+                </div>
+              </v-menu>
+
+              <v-btn
+                  icon
+                  :disabled="newTodo.length === 0"
+                  @click="addTodo"
+              >
+                <v-icon
+                >
+                  mdi-check
+                </v-icon>
+              </v-btn>
+            </div>
+          </transition>
 
 <!--          <v-hover>-->
 <!--            <template v-slot:default="{ hover }">-->
-          <transition
-              v-for="todo in todoList.tasks"
-              :key="todo.id"
+          <transition-group
+
               v-if="todoList.tasks"
-              name="fade">
+              name="list">
               <div
+                  v-for="todo in todoList.tasks"
+                  :key="todo.id"
                   :elevation="hover ? 10 : 3"
                   class="todo__item"
 
@@ -287,7 +294,8 @@
                   <p>Lorem ipsum dolor sit.</p>
                 </div>
               </div>
-          </transition>
+          </transition-group>
+
 <!--            </template>-->
 <!--          </v-hover>-->
           <div
@@ -1204,7 +1212,6 @@ export default {
               };
 
               this.addNewTodo = false
-              this.isNewTodoUsing = true
 
               axios.get(url, config)
                   .then(response => {
@@ -1439,11 +1446,13 @@ export default {
 }
 
 .todo__item {
-  border-radius: 25px;
+  border-radius: 5px;
   display: flex;
   justify-content: flex-start;
   align-items: baseline;
+  padding: 0;
   background-color: #121212;
+  max-height: 65px;
 }
 
 .todo__item:hover {
@@ -1511,6 +1520,26 @@ p {
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
   opacity: 0;
-  transition: opacity .5s;
+  transition: opacity .8s;
+}
+
+.slide-enter-active {
+  transition: all .3s ease;
+}
+.slide-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-enter, .slide-leave-to
+  /* .slide-fade-leave-active до версии 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
+.list-enter-active, .list-leave-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to /* .list-leave-active до версии 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
 }
 </style>
