@@ -1,3 +1,5 @@
+from django.core.mail import send_mail
+
 from ..api.serializers import *
 from ..models import *
 import datetime
@@ -143,8 +145,16 @@ class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
                 _project.shared_owners.add(shared_owner)
                 _project.save()
 
-                send_share_message.apply_async(eta=datetime.datetime.now() + datetime.timedelta(minutes=1),
-                                               kwargs={'to_email': shared_owner.email})
+                # send_share_message.apply_async(eta=datetime.datetime.now() + datetime.timedelta(minutes=1),
+                #                                kwargs={'to_email': shared_owner.email})
+
+                send_mail(
+                    'Some user just share todo list',
+                    'Some one share todo list to you, please check it!',
+                    settings.EMAIL_HOST_USER,
+                    [shared_owner.email, ],
+                    fail_silently=False
+                )
 
                 serializer = self.serializer_class(_project)
                 return Response(serializer.data,
