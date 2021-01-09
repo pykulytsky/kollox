@@ -21,3 +21,5 @@ class ListOwnerPermission(BasePermission):
 
         if request.user in _list.shared_owners.all():
             return True
+
+        raise PermissionError("You have no permissions to manage this list")

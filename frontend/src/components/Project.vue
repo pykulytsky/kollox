@@ -227,13 +227,11 @@
 <!--          <v-hover>-->
 <!--            <template v-slot:default="{ hover }">-->
           <transition-group
-
               v-if="todoList.tasks"
               name="list">
               <div
                   v-for="todo in todoList.tasks"
                   :key="todo.id"
-                  :elevation="hover ? 10 : 3"
                   class="todo__item"
 
               >

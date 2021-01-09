@@ -20,8 +20,6 @@ from itertools import chain
 
 from rest_framework import generics
 
-from todo.tasks import send_share_message
-
 
 class AllToDoListAPIView(APIView):
     permission_classes = (IsAuthenticated,)

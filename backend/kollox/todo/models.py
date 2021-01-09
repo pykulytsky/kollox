@@ -18,8 +18,6 @@ import django.dispatch
 
 # Create your models here.
 
-calculate_percent_signal = django.dispatch.Signal(providing_args=['todo_list_id'])
-
 
 class QuerySetChain(object):
     """
@@ -122,7 +120,15 @@ class BaseToDoList(models.Model):
     cover = models.ImageField(upload_to="assets/avatars/",
                               default="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg")
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        try:
+            if self.owner in self.shared_owners.all():
+                raise ValueError("Owner cant be in shared owners list")
 
+        except ValueError:
+            pass
+        super(BaseToDoList, self).save()
     class Meta:
         abstract = True
 
@@ -159,6 +165,8 @@ class SimpleToDoList(BaseToDoList):
     def save(self, *args, **kwargs):
         if self.status not in [s[0] for s in TODO_LIST_STATUS]:
             raise ValueError(f"Not Valid status. Can be {TODO_LIST_STATUS} not {self.status}.")
+
+
         super(SimpleToDoList, self).save(*args, **kwargs)
 
     class Meta:
@@ -179,8 +187,7 @@ class Project(BaseToDoList):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_projects",
                               verbose_name="ToDo-List Owner")
     shared_owners = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="shared_projects",
-                                          verbose_name="Shared Owner")
-
+                                           verbose_name="Shared Owner")
 
     tasks = GenericRelation('ToDoItem',
                             content_type_field='todo_list_type',
@@ -203,7 +210,7 @@ class Project(BaseToDoList):
         # TODO Move percent calculation to frontend
         completed_tasks = []
         for task in all_tasks:
-            if task.is_completed == True:
+            if task.is_completed:
                 completed_tasks.append(task)
         try:
             _completed_part = Decimal(str(len(completed_tasks) / self.tasks.count()))
@@ -218,6 +225,7 @@ class Project(BaseToDoList):
         self.calculate_percent()
         if self.status not in [s[0] for s in PROJECT_STATUS]:
             raise ValueError(f"Not Valid status. Can be {PROJECT_STATUS} not {self.status}.")
+
         super().save(*args, **kwargs)
 
 
@@ -269,13 +277,8 @@ class ToDoItem(models.Model):
 
     def save(self, *args, **kwargs):
         if isinstance(self.todo_list_type, Project):
-            list_id = self.todo_list.id
             self.todo_list.calculate_percent()
-            # calculate_percent_signal.send(sender=self, todo_list_id=list_id)
-        try:
-            self.todo_list.calculate_percent()
-        except:
-            pass
+
         self.todo_list.save()
         super(ToDoItem, self).save(*args, **kwargs)
         if self.reminder:

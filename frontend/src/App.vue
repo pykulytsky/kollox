@@ -149,7 +149,7 @@
       </v-menu>
     </v-app-bar>
     <v-main>
-      <transition name="fade">
+      <transition name="slide-left">
         <router-view
           @updateHeart="updateHeart(heart)"
         >
