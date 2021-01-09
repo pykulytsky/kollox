@@ -111,7 +111,7 @@ class Image(models.Model):
         return f'<Image: {self.title}>'
 
 
-class BaseToDoList(models.Model):
+class BaseToDoList(models.Model, ModelDiffMixin):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=512, verbose_name="ToDo-List Name")

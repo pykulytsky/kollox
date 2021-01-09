@@ -37,6 +37,16 @@ def simple_list(superuser):
 
 
 @pytest.fixture
+def project_queryset():
+    return Project.objects.all()
+
+
+@pytest.fixture
+def simple_list_queryset():
+    return Project.objects.all()
+
+
+@pytest.fixture
 def todo_by_simple_list(simple_list):
     todo = ToDoItem.objects.create(title="buy some grapes",
                                    description="I just need some vitamin C",

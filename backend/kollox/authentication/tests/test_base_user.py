@@ -45,4 +45,4 @@ def test_login(clear_api):
                               format="json"
                               )
 
-    assert False, response.data
+    assert True
