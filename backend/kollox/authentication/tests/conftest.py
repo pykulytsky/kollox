@@ -5,7 +5,7 @@ from rest_framework.test import APIClient
 
 
 @pytest.fixture
-def clear_api():
+def anon_api():
     client = APIClient()
 
     return client

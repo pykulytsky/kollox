@@ -10,7 +10,7 @@ def test_field_is_changed(project):
     assert project.has_changed
 
 
-@pytest.mark.xfail
+@pytest.mark.xfail(strict=True)
 def test_field_is_not_changed(project):
 
     assert 'name' in project.changed_fields
@@ -26,7 +26,7 @@ def test_changed_fields(project):
     assert len(project.changed_fields) > 1
 
 
-@pytest.mark.xfail
+@pytest.mark.xfail(strict=True)
 def test_diff_id_only(project):
 
     assert project.diff['id'][0] == project.diff['id'][1]

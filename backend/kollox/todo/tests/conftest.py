@@ -64,3 +64,22 @@ def api(superuser):
     client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
 
     return client
+
+
+@pytest.fixture
+def another_user(django_user_model):
+    return django_user_model.objects.create_user(
+        username="another user",
+        password="123456",
+        email="test@py.com"
+    )
+
+@pytest.fixture
+def another_project(another_user):
+    p = Project.objects.create(owner=another_user,
+                               name="Another Test Project",
+                               )
+
+    yield p
+
+    p.delete()
