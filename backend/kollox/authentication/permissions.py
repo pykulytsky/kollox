@@ -1,6 +1,6 @@
-from authentication.backend import JWTAuthentication
+from .backend import JWTAuthentication
 from rest_framework.permissions import BasePermission
-from authentication.models import User, UserManager
+from .models import User, UserManager
 
 
 class EmailVerified(BasePermission):

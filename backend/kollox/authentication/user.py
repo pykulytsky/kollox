@@ -1,4 +1,4 @@
-from authentication.models import User
+from .models import User
 from typing import Optional, Union
 from django.core.mail import send_mail
 
@@ -41,16 +41,16 @@ class UserCreator:
 
     @property
     def user(self) -> User:
-        return self.create()
+        return self.create()[0]
 
-    def send_verification_mail(self):
+    def send_verification_mail(self) -> None:
 
-        print(f'{self.user=}')
-        # send_mail(
-        #     'Please, verify your account',
-        #     f'Please, verify your account by using this verification code: {self.user.email_verification_code}',
-        #
-        #     settings.EMAIL_HOST_USER,
-        #     [self.email, ],
-        #     fail_silently=False
+        send_mail(
+            'Please, verify your account',
+            f'Please, verify your account by using this verification code: {self.user.email_verification_code}',
+
+            settings.EMAIL_HOST_USER,
+            [self.email, ],
+            fail_silently=False
+        )
 

@@ -12,7 +12,8 @@ import CalendarComponent from "@/components/core/CalendarComponent";
 export default {
   components: {
     appCalendar: CalendarComponent
-  }
+  },
+
 }
 
 </script>

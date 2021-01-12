@@ -1,5 +1,5 @@
 <template>
-  <v-row class="fill-height mt-0">
+  <v-row class="mt-0">
     <v-col>
       <v-sheet class="mt-0">
         <v-toolbar

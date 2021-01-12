@@ -34,7 +34,7 @@ class QuerySetChain(object):
         Performs a .count() for all subquerysets and returns the number of
         records as an integer.
         """
-        return sum(qs.count() for qs in self.querysets)
+        return len(self.querysets)
 
     def _clone(self):
         """Returns a clone of this queryset chain"""
@@ -129,6 +129,10 @@ class BaseToDoList(models.Model, ModelDiffMixin):
         except ValueError:
             pass
         super(BaseToDoList, self).save()
+
+    def count(self):
+        pass
+
     class Meta:
         abstract = True
 

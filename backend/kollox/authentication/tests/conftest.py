@@ -1,6 +1,5 @@
 import pytest
 
-from authentication.models import User
 from rest_framework.test import APIClient
 
 

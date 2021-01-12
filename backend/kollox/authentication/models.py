@@ -50,13 +50,17 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(db_index=True, max_length=255, unique=True)
+    username = models.CharField(db_index=True, 
+                                max_length=255, 
+                                unique=True)
     email = models.EmailField(validators=[validators.validate_email],
                               unique=True,
                               blank=False)
 
     age = models.IntegerField(validators=[custom_validators.validate_age, ], verbose_name='Age', blank=True, null=True)
-    last_name = models.CharField(max_length=255, blank=True, verbose_name="Last Name")
+    last_name = models.CharField(max_length=255, 
+                                 blank=True, 
+                                 verbose_name="Last Name")
     first_name = models.CharField(max_length=255, blank=True, verbose_name="First Name")
 
     avatar = models.ImageField(upload_to="assets/avatars/",
@@ -69,7 +73,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
 
     email_verified = models.BooleanField(default=False)
-    email_verification_code = models.UUIDField(max_length=32, default=uuid.uuid4, editable=False)
+    email_verification_code = models.UUIDField(max_length=32, 
+                                               default=uuid.uuid4, 
+                                               editable=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ('username',)

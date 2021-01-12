@@ -5,11 +5,6 @@ from typing import Any
 from django.conf import settings
 from .utils import send_share_email
 
-#
-# @app.task
-# def send_share_message(to_email: str) -> Any:
-#     send_share_message(to_email)
-
 
 @app.task
 def send_verification_email(to_email: str) -> Any:
