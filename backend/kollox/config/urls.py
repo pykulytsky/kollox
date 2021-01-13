@@ -52,4 +52,4 @@ urlpatterns = [
     path('api/auth/', include(auth_urls)),
     path('api/todo/', include(todo_urls)),
     path('sentry-debug/', trigger_error),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [path('silk/', include('silk.urls', namespace='silk'))]

@@ -30,5 +30,9 @@ class TodoItemCreator:
         raise NotImplementedError
 
     def create_reminder(self):
+        raise NotImplementedError
+
+    def notify_by_mail(sef):
+        
         
 

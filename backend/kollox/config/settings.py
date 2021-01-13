@@ -54,7 +54,8 @@ THIRD_PARTY_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    "djcelery_email"
+    "djcelery_email",
+    'silk'
 ]
 
 PROJECT_APPS = [
@@ -97,6 +98,8 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     # CORS Headers
     'corsheaders.middleware.CorsMiddleware',
+
+    'silk.middleware.SilkyMiddleware',
 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -198,3 +201,5 @@ EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
+
+STATIC_ROOT = '/static/'
