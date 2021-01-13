@@ -39,7 +39,8 @@
           </transition>
           <div class="card__header1">
             <h2 class="card__header__text">{{ todoList.name }}</h2>
-
+            
+            
             <v-menu
                 left
                 bottom
@@ -739,6 +740,7 @@
 import axios from 'axios'
 
 export default {
+
   data: () => {
     return {
       drawer: false,
@@ -771,7 +773,10 @@ export default {
         owner: null,
         cover: '',
         percentageCompleted: 0.0,
-        sharedOwners: []
+        sharedOwners: [],
+
+        created: null,
+        updated: null
       },
       newTodo: '',
       todoType: 10,
@@ -993,8 +998,10 @@ export default {
                     this.todoList.percentageCompleted = response.data.percentage_completed
                     this.todoList.percentageCompleted *= 100
                     this.todoList.sharedOwners = response.data.shared_owners
-                    this.$store.dispatch('setLoading', false)
+                    this.todoList.created = new Date(response.data.created)
+                    this.todoList.updated = new Date(response.data.updated)
 
+                    this.$store.dispatch('setLoading', false)
 
                     for (let i=0; i< this.todoList.tasks.length; i++) {
                       this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1038,7 +1045,6 @@ export default {
           }
         }
       })
-      console.log(userForShare)
 
       axios.patch('http://localhost:8000/api/todo/project/' + this.$route.params['id'] + '/',
           {
@@ -1097,6 +1103,8 @@ export default {
               this.todoList.percentageCompleted = response.data.percentage_completed
               this.todoList.percentageCompleted *= 100
               this.todoList.sharedOwners = response.data.shared_owners
+              this.todoList.created = new Date(response.data.created)
+              this.todoList.updated = new Date(response.data.updated)
 
               for (let i=0; i< this.todoList.tasks.length; i++) {
                 this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1150,6 +1158,8 @@ export default {
               this.todoList.percentageCompleted = response.data.percentage_completed
               this.todoList.percentageCompleted *= 100
               this.todoList.sharedOwners = response.data.shared_owners
+              this.todoList.created = new Date(response.data.created)
+              this.todoList.updated = new Date(response.data.updated)
 
               for (let i=0; i< this.todoList.tasks.length; i++) {
                 this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1233,6 +1243,8 @@ export default {
                     this.todoList.percentageCompleted = response.data.percentage_completed
                     this.todoList.percentageCompleted *= 100
                     this.todoList.sharedOwners = response.data.shared_owners
+                    this.todoList.created = new Date(response.data.created)
+                    this.todoList.updated = new Date(response.data.updated)
 
                     for (let i=0; i< this.todoList.tasks.length; i++) {
                       this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1245,7 +1257,6 @@ export default {
 
             })
             .catch(error => {
-              console.log(error)
 
             })
 
@@ -1265,6 +1276,8 @@ export default {
               this.todoList.percentageCompleted = response.data.percentage_completed
               this.todoList.percentageCompleted *= 100
               this.todoList.sharedOwners = response.data.shared_owners
+              this.todoList.created = new Date(response.data.created)
+              this.todoList.updated = new Date(response.data.updated)
 
               for (let i=0; i< this.todoList.tasks.length; i++) {
                 this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1303,6 +1316,8 @@ export default {
                     this.todoList.percentageCompleted = response.data.percentage_completed
                     this.todoList.percentageCompleted *= 100
                     this.todoList.sharedOwners = response.data.shared_owners
+                    this.todoList.created = new Date(response.data.created)
+                    this.todoList.updated = new Date(response.data.updated)
 
                     for (let i=0; i< this.todoList.tasks.length; i++) {
                       this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1314,7 +1329,6 @@ export default {
 
             })
             .catch(error => {
-              console.log(error)
 
             })
 
@@ -1334,6 +1348,8 @@ export default {
               this.todoList.percentageCompleted = response.data.percentage_completed
               this.todoList.percentageCompleted *= 100
               this.todoList.sharedOwners = response.data.shared_owners
+              this.todoList.created = new Date(response.data.created)
+              this.todoList.updated = new Date(response.data.updated)
 
               for (let i=0; i< this.todoList.tasks.length; i++) {
                 this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1368,6 +1384,8 @@ export default {
           this.todoList.percentageCompleted = response.data.percentage_completed
           this.todoList.percentageCompleted *= 100
           this.todoList.sharedOwners = response.data.shared_owners
+          this.todoList.created = new Date(response.data.created)
+          this.todoList.updated = new Date(response.data.updated)
 
           for (let i=0; i< this.todoList.tasks.length; i++) {
             this.todoList.tasks[i] = Object.assign(this.todoList.tasks[i], {detail: false})
@@ -1376,9 +1394,11 @@ export default {
         .catch(error => {
           this.$store.dispatch('setError', error.message)
         })
+  
 
+  },
 
-  }
+  
 
 }
 </script>
@@ -1471,8 +1491,6 @@ export default {
 .item__checkbox {
   margin: 0;
   padding: 0;
-  border-radius: 50%;
-
 }
 p {
   margin: 0;
@@ -1483,7 +1501,7 @@ p {
   margin: 25px 15px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: flex-start;
 }
 
 .header__image {
@@ -1546,4 +1564,5 @@ p {
   opacity: 0;
   transform: translateY(30px);
 }
+
 </style>

@@ -201,7 +201,7 @@ export default {
     },
 
     heart () {
-      if (this.isListFavorite) {
+      if (!!this.$route.query['favorite']) {
         return  this.heartIcon
       }
       else {
@@ -215,6 +215,11 @@ export default {
     links () {
       if (this.isUserAuthenticated) {
         return [
+          {
+            url: '/home',
+            icon: 'mdi-home',
+            name: 'Home'
+          },
           {
             url: '/calendar',
             icon: 'mdi-calendar',
@@ -322,30 +327,36 @@ export default {
     // },
 
     addListToFavorite () {
+
       const listId = this.$route.params['id']
       const listType = this.$route.name
-      const isListFavorite = this.$route.query['favorite']
+      const isListFavorite = !!this.$route.query['favorite']
 
       if (listType == 'project') {
-      const url = 'http://localhost:8000/api/todo/project/' + listId + '/'
-      const config = {
-        headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
-      };
+        console.log("is favorite: ", isListFavorite)
 
-      axios.patch(url, {
-            favorite: !isListFavorite
-          },
-          config)
-          .then(response => {
-            // TODO notify
-            this.todoList.favorite = !this.todoList.favorite
-            this.$emit('updateHeart', this.heart)
-          })
-          .catch(error => {
+        const url = 'http://localhost:8000/api/todo/project/' + listId + '/'
+        const config = {
+          headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
+        };
 
-          })
+        axios.patch(url, {
+              favorite: isListFavorite
+            },
+            config)
+            .then(response => {
+              // TODO notify
+
+              console.log(response)
+              this.todoList.favorite = !this.todoList.favorite
+              this.$emit('updateHeart', this.heart)
+            })
+            .catch(error => {
+
+            })
       }
       else if (listType == 'simple-todo-list') {
+
         const url = 'http://localhost:8000/api/todo/simple-todo-list/' + listId + '/'
         const config = {
           headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))['token']}` }
@@ -364,6 +375,8 @@ export default {
 
             })
       }
+      
+
     },
 
     search () {

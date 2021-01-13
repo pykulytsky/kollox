@@ -1,3 +1,4 @@
+from todo.models import Reminder
 from config.celery import app
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -15,3 +16,8 @@ def send_verification_email(to_email: str) -> Any:
         [to_email, ],
         fail_silently=False
     )
+
+
+@app.task
+def notify_with_reminder(reminder: Reminder) ->  None:
+    

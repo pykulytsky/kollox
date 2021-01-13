@@ -16,6 +16,7 @@ import ErrorPage from "@/components/ErrorPage.vue";
 
 import Search from '@/components/Search'
 import Calendar from "@/components/Calendar";
+import Home from "@/components/Home";
 
 Vue.use(VueRouter)
 
@@ -143,6 +144,21 @@ const routes = [
     component: ErrorPage,
     name: '404'
   },
+
+
+  {
+    path: '/home',
+    component: Home,
+    name: 'home',
+    beforeEnter(to, from, next) {
+      if (JSON.parse(localStorage.getItem('auth'))['token']) {
+        store.dispatch('loadUser')
+        next()
+      } else {
+        next('/login')
+      }
+    }
+  }
 ]
 
 const router = new VueRouter({

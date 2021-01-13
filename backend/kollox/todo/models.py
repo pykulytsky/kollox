@@ -241,7 +241,7 @@ TODO_ITEM_REPEAT = [
 ]
 
 
-class Reminder(models.Model):
+class Reminder(models.Model, ModelDiffMixin):
     remind_time = models.DateTimeField(blank=True, verbose_name="Remind Time", null=True)
 
     is_repited = models.BooleanField(default=False, verbose_name="Repeat?")
@@ -252,7 +252,7 @@ class Reminder(models.Model):
         ordering = ['remind_time']
 
 
-class ToDoItem(models.Model):
+class ToDoItem(models.Model, ModelDiffMixin):
     title = models.CharField(max_length=512, verbose_name="Task Title")
     description = models.TextField(verbose_name="Desctiption", blank=True)
     todo_list_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)

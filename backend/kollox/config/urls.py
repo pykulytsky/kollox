@@ -27,6 +27,10 @@ import todo.urls as todo_urls
 from django.conf.urls.static import static
 
 
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
+
 schema_view = get_schema_view(
    openapi.Info(
       title="Todolist API",
@@ -46,5 +50,6 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('admin/', admin.site.urls),
     path('api/auth/', include(auth_urls)),
-    path('api/todo/', include(todo_urls))
+    path('api/todo/', include(todo_urls)),
+    path('sentry-debug/', trigger_error),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

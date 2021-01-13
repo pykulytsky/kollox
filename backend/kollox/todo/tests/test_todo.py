@@ -9,9 +9,7 @@ def subtask(superuser, simple_list):
     task = ToDoItem.objects.create(title="go to door",
                                       todo_list=simple_list)
 
-    yield task
-
-    task.delete()
+    return task
 
 
 def test_base_todo(todo_by_simple_list, superuser, simple_list):

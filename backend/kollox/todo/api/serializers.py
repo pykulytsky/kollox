@@ -163,9 +163,12 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
                   'shared_owners',
                   'percentage_completed',
                   'cover_pick',
+                  'favorite',
                   'cover',
                   'tasks',
-                  'total_tasks')
+                  'total_tasks',
+                  'created',
+                  'updated')
 
     def save(self, **kwargs):
         if 'cover_pick' in self.validated_data.keys():

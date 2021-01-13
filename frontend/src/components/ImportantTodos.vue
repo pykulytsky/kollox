@@ -27,6 +27,7 @@
               class="todo__item"
               v-if="tasks"
               v-for="(todo, i) in tasks"
+              :key="todo.id"
           >
             <v-checkbox
                 color="indigo"
