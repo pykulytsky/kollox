@@ -2,7 +2,6 @@ from django.db import models
 from django.conf import settings
 from django.core import validators
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.http import JsonResponse
 from django.contrib.auth.models import BaseUserManager
 import authentication.validators as custom_validators
 
@@ -50,16 +49,16 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(db_index=True, 
-                                max_length=255, 
+    username = models.CharField(db_index=True,
+                                max_length=255,
                                 unique=True)
     email = models.EmailField(validators=[validators.validate_email],
                               unique=True,
                               blank=False)
 
     age = models.IntegerField(validators=[custom_validators.validate_age, ], verbose_name='Age', blank=True, null=True)
-    last_name = models.CharField(max_length=255, 
-                                 blank=True, 
+    last_name = models.CharField(max_length=255,
+                                 blank=True,
                                  verbose_name="Last Name")
     first_name = models.CharField(max_length=255, blank=True, verbose_name="First Name")
 
@@ -73,8 +72,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
 
     email_verified = models.BooleanField(default=False)
-    email_verification_code = models.UUIDField(max_length=32, 
-                                               default=uuid.uuid4, 
+    email_verification_code = models.UUIDField(max_length=32,
+                                               default=uuid.uuid4,
                                                editable=False)
 
     USERNAME_FIELD = 'email'

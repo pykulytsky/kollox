@@ -1,5 +1,5 @@
 from .models import User
-from typing import Optional, Union
+from typing import Optional, Tuple
 from django.core.mail import send_mail
 
 from django.conf import settings
@@ -27,7 +27,7 @@ class UserCreator:
         else:
             return self.username
 
-    def create(self) -> User:
+    def create(self) -> Tuple[User, bool]:
         _user = User.objects.update_or_create(username=self.username,
                                               email=self.email,
                                               password=self.password,
@@ -53,4 +53,3 @@ class UserCreator:
             [self.email, ],
             fail_silently=False
         )
-

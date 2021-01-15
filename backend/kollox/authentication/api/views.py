@@ -14,8 +14,6 @@ from authentication.api.serializers import \
      UserDetailSerializer)
 
 
-
-
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = RegistrationSerializer
@@ -68,7 +66,6 @@ class UserAPIView(generics.RetrieveUpdateDestroyAPIView):
                         status=status.HTTP_200_OK)
 
 
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, ])
 def verify_email(request, verification_code):
@@ -79,7 +76,7 @@ def verify_email(request, verification_code):
         })
     else:
         user = request.user
-        if user.email_verified == True:
+        if user.email_verified is True:
             return Response({
                 'status': 'Email allready verified.'
             },
@@ -95,5 +92,3 @@ def verify_email(request, verification_code):
             return Response({
                 'status': 'Wrong verification code.'
             })
-
-

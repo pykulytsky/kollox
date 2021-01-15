@@ -1534,9 +1534,6 @@ p {
   margin-top: 5px;
 }
 
-.main {
-}
-
 .fade-enter-active, .fade-leave-active {
   transition: opacity 1s;
 }

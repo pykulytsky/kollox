@@ -1,7 +1,6 @@
 import pytest
 from django.urls import reverse
 
-from authentication.models import User
 
 pytestmark = [pytest.mark.django_db]
 
@@ -45,4 +44,4 @@ def test_login(anon_api):
                               format="json"
                               )
 
-    assert True
+    assert response is not None

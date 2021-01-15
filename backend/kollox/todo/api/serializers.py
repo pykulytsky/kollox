@@ -135,17 +135,26 @@ class SimpleToDoListDetailSerializer(serializers.ModelSerializer):
                   'total_tasks')
 
     def save(self, **kwargs):
-        if self.validated_data['cover_pick']:
+        if 'cover_pick' in self.validated_data.keys():
             img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
             cover = img.filename
         super().save(**kwargs)
 
     def update(self, instance, validated_data):
-        if validated_data['cover_pick']:
+        if 'cover_pick' in validated_data.keys():
             img = Image.open(f"d:/repos/kollox/frontend/src/assets/cover{self.validated_data['cover_pick']}.jpg")
             instance.cover = img.filename
+
+        instance.name = validated_data.get('name', instance.name)
+        instance.favorite = validated_data.get('favorite', instance.favorite)
+        
+        if 'shared_owners' in validated_data.keys():
+            _shared_owner = User.objects.get(id=self.validated_data.get('shared_owners'))
+            instance.shared_owners.add(_shared_owner)
+
         instance.save()
         return instance
+
 
 
 
@@ -183,8 +192,7 @@ class ProjectDetailSerializer(serializers.ModelSerializer):
 
         instance.name = validated_data.get('name', instance.name)
         instance.favorite = validated_data.get('favorite', instance.favorite)
-        print(self.validated_data.keys())
-        # TODO FIx patching shared owners
+
         if 'shared_owners' in validated_data.keys():
             _shared_owner = User.objects.get(id=self.validated_data.get('shared_owners'))
             instance.shared_owners.add(_shared_owner)

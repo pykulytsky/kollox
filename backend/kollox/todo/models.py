@@ -14,10 +14,6 @@ from django.forms.models import model_to_dict
 
 from versatileimagefield.fields import VersatileImageField, PPOIField
 
-import django.dispatch
-
-# Create your models here.
-
 
 class QuerySetChain(object):
     """
@@ -282,8 +278,8 @@ class ToDoItem(models.Model, ModelDiffMixin):
     def save(self, *args, **kwargs):
         if isinstance(self.todo_list_type, Project):
             self.todo_list.calculate_percent()
-
-        self.todo_list.save()
+            self.todo_list.save()
+            
         super(ToDoItem, self).save(*args, **kwargs)
         if self.reminder:
             self.__past_remind_time = self.reminder.remind_time

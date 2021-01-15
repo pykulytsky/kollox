@@ -1,5 +1,6 @@
 import pytest
 from todo.models import ToDoItem
+from django.urls import reverse
 
 pytestmark = [pytest.mark.django_db]
 
@@ -24,3 +25,15 @@ def test_subtask(todo_by_simple_list, superuser, simple_list, subtask):
     todo_by_simple_list.save()
 
     assert todo_by_simple_list.subtask.title == 'go to door'
+
+
+def test_favorites_tasks(todo_by_simple_list, api):
+    todo_by_simple_list.is_favorite = True
+    todo_by_simple_list.save()
+
+    url = reverse('favorite_todos')
+    response = api.get(url)
+
+    assert response.status_code == 200
+    assert False, response.data
+

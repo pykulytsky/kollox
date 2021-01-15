@@ -66,3 +66,4 @@ def test_user_creator_user_property():
     assert user_creator.user.username == 'new_user'
     assert user_creator.user.email == 'test1@py.com'
     assert user_creator.user.password == '123456'
+    assert new_user[0].username == 'new_user'

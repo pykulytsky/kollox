@@ -1,6 +1,7 @@
 from rest_framework.permissions import BasePermission
 from .models import Project, SimpleToDoList
 
+
 class ListOwnerPermission(BasePermission):
     """
     Check if current user is owner of todolist
